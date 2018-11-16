@@ -10,4 +10,9 @@
     <string name="my_music">My music</string>
     <string name="setting">Setting</string>
     <string name="home">Home</string>
+    <string name="all_music">All music</string>
+    <string name="alternate">Alternate</string>
+    <string name="ambient">Ambient</string>
+    <string name="classical">Classical</string>
+    <string name="all_audio">All audio</string>
 </resources>
