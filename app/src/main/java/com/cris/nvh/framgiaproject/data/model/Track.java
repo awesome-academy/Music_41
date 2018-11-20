@@ -18,6 +18,7 @@ public class Track implements Parcelable {
 	private String mPermalinkUrl;
 	private String mTitle;
 	private String mArtist;
+	private String mArtistImage;
 
 	public final static Parcelable.Creator<Track> CREATOR = new Creator<Track>() {
 		@SuppressWarnings({
@@ -48,6 +49,7 @@ public class Track implements Parcelable {
 		mPermalinkUrl = in.readString();
 		mTitle = in.readString();
 		mArtist = in.readString();
+		mArtistImage = in.readString();
 	}
 
 	public void writeToParcel(Parcel dest, int flags) {
@@ -59,6 +61,7 @@ public class Track implements Parcelable {
 		dest.writeString(mPermalinkUrl);
 		dest.writeString(mTitle);
 		dest.writeString(mArtist);
+		dest.writeString(mArtistImage);
 	}
 
 	public int describeContents() {
@@ -127,5 +130,13 @@ public class Track implements Parcelable {
 
 	public void setArtist(String artist) {
 		mArtist = artist;
+	}
+
+	public String getArtistImage() {
+		return mArtistImage;
+	}
+
+	public void setArtistImage(String artistImage) {
+		mArtistImage = artistImage;
 	}
 }

@@ -18,8 +18,8 @@ import com.cris.nvh.framgiaproject.R;
 import com.cris.nvh.framgiaproject.data.model.Genre;
 import com.cris.nvh.framgiaproject.data.model.Track;
 import com.cris.nvh.framgiaproject.data.repository.TrackRepository;
-import com.cris.nvh.framgiaproject.data.source.local.LocalTasks;
-import com.cris.nvh.framgiaproject.data.source.remote.RemoteTasks;
+import com.cris.nvh.framgiaproject.data.source.local.TracksLocalDataSource;
+import com.cris.nvh.framgiaproject.data.source.remote.TracksRemoteDataSource;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -50,7 +50,7 @@ public class SplashActivity extends AppCompatActivity implements SplashContract.
 		requestPermission();
 		mSplashPresenter = new SplashPresenter(this);
 		mSplashPresenter.initRepository(TrackRepository
-				.getInstance(LocalTasks.getInstance(this), RemoteTasks.getInstance(this)));
+				.getInstance(TracksLocalDataSource.getInstance(this), TracksRemoteDataSource.getInstance(this)));
 		loadData();
 	}
 
