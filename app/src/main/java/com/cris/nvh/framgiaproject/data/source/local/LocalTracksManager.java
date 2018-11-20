@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 public class LocalTracksManager {
 	private static final String NOT_MUSIC = " != 0";
-	private static final String EQUAL = " =";
+	private static final String EQUAL = "=";
 	private static LocalTracksManager sLocalTracksManager;
 	private Context mContext;
 

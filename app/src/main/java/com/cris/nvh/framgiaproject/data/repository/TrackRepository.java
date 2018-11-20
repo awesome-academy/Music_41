@@ -4,11 +4,6 @@ import com.cris.nvh.framgiaproject.data.model.Genre;
 import com.cris.nvh.framgiaproject.data.model.Track;
 import com.cris.nvh.framgiaproject.data.source.TracksDataSource;
 
-/**
- * Created by nvh
- * Contact: toiyeuthethao1997@gmail.com
- */
-
 public class TrackRepository implements TracksDataSource.Local, TracksDataSource.Remote {
 	private static TrackRepository sTrackRepository;
 	private TracksDataSource.Local mLocal;

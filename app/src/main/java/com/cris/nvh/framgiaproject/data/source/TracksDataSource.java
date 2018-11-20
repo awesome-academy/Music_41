@@ -5,11 +5,6 @@ import com.cris.nvh.framgiaproject.data.model.Track;
 
 import java.util.List;
 
-/**
- * Created by nvh
- * Contact: toiyeuthethao1997@gmail.com
- */
-
 public interface TracksDataSource {
 	interface LoadDataCallBack<T> {
 		void onSuccess(List<T> datas);

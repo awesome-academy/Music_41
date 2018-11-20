@@ -20,11 +20,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
-/**
- * Created by nvh
- * Contact: toiyeuthethao1997@gmail.com
- */
-
 public class LoadTracksAsyncTask extends AsyncTask<String[], Integer, ArrayList<Genre>> {
 	private TracksDataSource.LoadDataCallBack<Genre> mCallback;
 	private static final String ARTWORK_URL = "artwork_url";

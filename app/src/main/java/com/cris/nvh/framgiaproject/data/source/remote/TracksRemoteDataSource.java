@@ -6,11 +6,6 @@ import com.cris.nvh.framgiaproject.data.model.Genre;
 import com.cris.nvh.framgiaproject.data.model.Track;
 import com.cris.nvh.framgiaproject.data.source.TracksDataSource;
 
-/**
- * Created by nvh
- * Contact: toiyeuthethao1997@gmail.com
- */
-
 public class TracksRemoteDataSource implements TracksDataSource.Remote {
 	private static TracksRemoteDataSource sRemoteTask;
 	private Context mContext;

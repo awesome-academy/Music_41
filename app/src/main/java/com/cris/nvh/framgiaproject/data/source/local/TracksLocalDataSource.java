@@ -5,11 +5,6 @@ import android.content.Context;
 import com.cris.nvh.framgiaproject.data.model.Track;
 import com.cris.nvh.framgiaproject.data.source.TracksDataSource;
 
-/**
- * Created by nvh
- * Contact: toiyeuthethao1997@gmail.com
- */
-
 public class TracksLocalDataSource implements TracksDataSource.Local {
 	private static TracksLocalDataSource sTracksLocalDataSource;
 	private LocalTracksManager mLocalTracksManager;
