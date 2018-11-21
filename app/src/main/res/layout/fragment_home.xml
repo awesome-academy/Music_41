@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/search_box"
+        layout="@layout/layout_searchbox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <ScrollView
+        android:id="@+id/home_scrollview"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/dp_10"
+        android:scrollbars="none"
+        app:layout_constraintTop_toBottomOf="@id/search_box"
+        app:layout_constraintBottom_toTopOf="@id/mini_mediaplayer"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <include
+                android:id="@+id/layout_top_song"
+                layout="@layout/layout_home_top_song"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp_180" />
+
+            <include
+                android:id="@+id/list_genres"
+                layout="@layout/layout_list_genres"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <include
+        android:id="@+id/mini_mediaplayer"
+        layout="@layout/layout_mini_mediaplayer"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/dp_55"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/home_scrollview" />
+
+</android.support.constraint.ConstraintLayout>
