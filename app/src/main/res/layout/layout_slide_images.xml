@@ -2,8 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/color_back"
-    android:padding="1dip">
+    android:background="@color/color_black">
 
     <ImageView
         android:id="@+id/image_slide"
@@ -12,4 +11,5 @@
         android:layout_gravity="center"
         android:adjustViewBounds="true"
         android:scaleType="fitXY" />
+
 </FrameLayout>
