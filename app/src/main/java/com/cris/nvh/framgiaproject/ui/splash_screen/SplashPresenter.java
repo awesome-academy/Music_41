@@ -35,7 +35,6 @@ public class SplashPresenter implements SplashContract.Presenter {
 			public void onSuccess(List<Genre> genres) {
 				mView.onloadApiSuccess((ArrayList<Genre>) genres);
 			}
-
 			@Override
 			public void onFail(String msg) {
 				mView.onLoadApiFailed(msg);

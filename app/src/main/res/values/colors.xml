@@ -4,7 +4,7 @@
     <color name="color_primary_dark">#303F9F</color>
     <color name="color_accent">#FF4081</color>
     <color name="color_white">#FFFF</color>
-    <color name="color_back">#000</color>
+    <color name="color_black">#000</color>
     <color name="color_mini_mediaplayer">#B1BCBE</color>
     <color name="color_gray">#323737</color>
 </resources>
