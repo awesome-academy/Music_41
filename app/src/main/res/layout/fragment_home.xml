@@ -2,7 +2,8 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/color_gray">
 
     <include
         android:id="@+id/search_box"
@@ -17,11 +18,10 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/dp_10"
-        android:scrollbars="none"
-        app:layout_constraintTop_toBottomOf="@id/search_box"
         app:layout_constraintBottom_toTopOf="@id/mini_mediaplayer"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent">
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/search_box">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -38,7 +38,8 @@
                 android:id="@+id/list_genres"
                 layout="@layout/layout_list_genres"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp_45" />
 
         </LinearLayout>
 
@@ -51,7 +52,6 @@
         android:layout_height="@dimen/dp_55"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/home_scrollview" />
+        app:layout_constraintRight_toRightOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

@@ -21,11 +21,11 @@ public class Anotation {
 			ListGenres.COUNTRY
 	})
 	@interface ListGenres {
-		public static final String ALL_MUSIC = "genre=soundcloud:genres:all-music";
-		public static final String ALL_AUDIO = "genre=soundcloud:genres:all-audio";
-		public static final String ALTERNATIVE = "genre=soundcloud:genres:salternativerock";
-		public static final String AMBIENT = "genre=soundcloud:genres:ambient";
-		public static final String CLASSICAL = "genre=soundcloud:genres:classical";
-		public static final String COUNTRY = "genre=soundcloud:genres:country";
+		String ALL_MUSIC = "genre=soundcloud:genres:all-music";
+		String ALL_AUDIO = "genre=soundcloud:genres:all-audio";
+		String ALTERNATIVE = "genre=soundcloud:genres:alternativerock";
+		String AMBIENT = "genre=soundcloud:genres:ambient";
+		String CLASSICAL = "genre=soundcloud:genres:classical";
+		String COUNTRY = "genre=soundcloud:genres:country";
 	}
 }

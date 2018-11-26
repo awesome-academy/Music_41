@@ -15,4 +15,10 @@
     <string name="ambient">Ambient</string>
     <string name="classical">Classical</string>
     <string name="all_audio">All audio</string>
+    <string name="text_library">Library</string>
+    <string name="text_song">Songs</string>
+    <string name="text_recent">Recents</string>
+    <string name="donwload">Downloads</string>
+    <string name="favorite">Favorites</string>
+    <string name="default_time">0:00</string>
 </resources>
