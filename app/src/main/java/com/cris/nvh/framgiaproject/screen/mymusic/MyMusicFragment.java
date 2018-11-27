@@ -1,4 +1,4 @@
-package com.cris.nvh.framgiaproject.ui.my_music_screen;
+package com.cris.nvh.framgiaproject.screen.mymusic;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

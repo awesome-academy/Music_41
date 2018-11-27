@@ -1,5 +1,7 @@
-package com.cris.nvh.framgiaproject.ui.home_screen;
+package com.cris.nvh.framgiaproject.screen.home;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -17,6 +19,7 @@ import com.cris.nvh.framgiaproject.R;
 import com.cris.nvh.framgiaproject.adapter.GenreAdapter;
 import com.cris.nvh.framgiaproject.adapter.SongsSlideAdapter;
 import com.cris.nvh.framgiaproject.data.model.Genre;
+import com.cris.nvh.framgiaproject.screen.playing.PlayActivity;
 
 import java.util.ArrayList;
 
@@ -25,7 +28,7 @@ import java.util.ArrayList;
  * Contact: toiyeuthethao1997@gmail.com
  */
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements View.OnClickListener {
 	private String keyGenres = "genres";
 	private static final int ALL_MUSIC_INDEX = 0;
 	private static final int MAX_IMAGES = 3;
@@ -53,6 +56,22 @@ public class HomeFragment extends Fragment {
 		super.onCreate(savedInstanceState);
 	}
 
+	public static Intent getPlayActivityIntent(Context context) {
+		Intent intent = new Intent(context, PlayActivity.class);
+		return intent;
+	}
+
+	@Override
+	public void onClick(View view) {
+		switch (view.getId()) {
+			case R.id.mini_mediaplayer:
+				startActivity(HomeFragment.getPlayActivityIntent(getActivity()));
+				break;
+			default:
+				break;
+		}
+	}
+
 	private void initView(View view) {
 		mViewPager = view.findViewById(R.id.pager_images);
 		mTabLayout = view.findViewById(R.id.indicator);
@@ -60,11 +79,7 @@ public class HomeFragment extends Fragment {
 		mRecyclerView = view.findViewById(R.id.recycler_genres);
 		initImageSlide();
 		initGenreAdapter();
-		mConstraintLayout.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-			}
-		});
+		mConstraintLayout.setOnClickListener(this);
 	}
 
 	private void initImageSlide() {

@@ -1,4 +1,4 @@
-package com.cris.nvh.framgiaproject.ui.splash_screen;
+package com.cris.nvh.framgiaproject.screen.splash;
 
 import android.Manifest;
 import android.content.Context;
@@ -21,7 +21,6 @@ import com.cris.nvh.framgiaproject.data.repository.TrackRepository;
 import com.cris.nvh.framgiaproject.data.source.local.TracksLocalDataSource;
 import com.cris.nvh.framgiaproject.data.source.remote.TracksRemoteDataSource;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
