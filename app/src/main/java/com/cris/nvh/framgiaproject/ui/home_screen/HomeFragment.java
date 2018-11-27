@@ -11,18 +11,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import com.cris.nvh.framgiaproject.R;
 import com.cris.nvh.framgiaproject.adapter.GenreAdapter;
 import com.cris.nvh.framgiaproject.adapter.SongsSlideAdapter;
 import com.cris.nvh.framgiaproject.data.model.Genre;
-import com.cris.nvh.framgiaproject.data.model.Track;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Random;
-import java.util.Set;
 
 /**
  * Created by nvh
@@ -36,7 +32,8 @@ public class HomeFragment extends Fragment {
 	private static final int SIZE_BOUND = 10;
 	private ViewPager mViewPager;
 	private TabLayout mTabLayout;
-	private ImageButton mButtonSearch;
+	private RecyclerView mRecyclerView;
+	private ImageView mImageSearch;
 	private ConstraintLayout mConstraintLayout;
 	private ArrayList<Genre> mGenres;
 
@@ -60,19 +57,10 @@ public class HomeFragment extends Fragment {
 		mViewPager = view.findViewById(R.id.pager_images);
 		mTabLayout = view.findViewById(R.id.indicator);
 		mConstraintLayout = view.findViewById(R.id.mini_mediaplayer);
+		mRecyclerView = view.findViewById(R.id.recycler_genres);
 		initImageSlide();
-		RecyclerView recyclerView = view.findViewById(R.id.recycler_genres);
-		recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-		GenreAdapter genreAdapter = new GenreAdapter(mGenres);
-		recyclerView.setAdapter(genreAdapter);
-
+		initGenreAdapter();
 		mConstraintLayout.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-			}
-		});
-		mButtonSearch = view.findViewById(R.id.button_search);
-		mButtonSearch.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
 			}
@@ -80,32 +68,18 @@ public class HomeFragment extends Fragment {
 	}
 
 	private void initImageSlide() {
+		SongsSlideAdapter songsSlideAdapter = new SongsSlideAdapter();
+		mViewPager.setAdapter(songsSlideAdapter);
+		mTabLayout.setupWithViewPager(mViewPager, true);
+	}
+
+	private void initGenreAdapter() {
 		if (getArguments() != null) {
-			mGenres = (ArrayList<Genre>)
-					getArguments().getSerializable(keyGenres);
-			initAdapter(mGenres);
-			mTabLayout.setupWithViewPager(mViewPager, true);
+			mGenres = getArguments().getParcelableArrayList(keyGenres);
+			mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+			GenreAdapter genreAdapter = new GenreAdapter(mGenres);
+			mRecyclerView.setAdapter(genreAdapter);
 			getArguments().remove(keyGenres);
 		}
-	}
-
-	private void initAdapter(ArrayList<Genre> genres) {
-		ArrayList<Track> tracks = new ArrayList<>();
-		int[] number = randomNumber();
-		for (int val : number)
-			tracks.add(genres.get(ALL_MUSIC_INDEX).getTracks().get(val));
-		SongsSlideAdapter songsSlideAdapter = new SongsSlideAdapter(tracks);
-		mViewPager.setAdapter(songsSlideAdapter);
-	}
-
-	public int[] randomNumber() {
-		Set<Integer> set = new HashSet();
-		while (set.size() < MAX_IMAGES) {
-			set.add(new Random().nextInt(SIZE_BOUND));
-		}
-		int[] numbers = new int[set.size()];
-		int i = 0;
-		for (int val : set) numbers[i++] = val;
-		return numbers;
 	}
 }

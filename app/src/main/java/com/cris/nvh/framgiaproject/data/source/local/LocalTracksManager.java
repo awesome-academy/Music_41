@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 public class LocalTracksManager {
 	private static final String NOT_MUSIC = " != 0";
-	private static final String EQUAL = "=";
+	private static final String EQUAL = "=?";
 	private static LocalTracksManager sLocalTracksManager;
 	private Context mContext;
 
@@ -70,16 +70,18 @@ public class LocalTracksManager {
 	}
 
 	private String getAlbumArt(int albumId) {
-		String[] projections = {MediaStore.Audio.Albums.ALBUM_ART};
+		String[] projections = {MediaStore.Audio.Albums._ID,
+				MediaStore.Audio.Albums.ALBUM_ART};
 		String selection = new StringBuilder()
 				.append(MediaStore.Audio.Albums._ID)
 				.append(EQUAL)
-				.append(albumId)
 				.toString();
+		String[] selectionArgs = {String.valueOf(albumId)};
 		Cursor cursorAlbum = mContext.getContentResolver()
 				.query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
 						projections, selection,
-						null, null);
+						selectionArgs,
+						null);
 		if (cursorAlbum == null) return null;
 		String artwork = null;
 		if (cursorAlbum.moveToFirst()) {
@@ -90,18 +92,19 @@ public class LocalTracksManager {
 		return artwork;
 	}
 
+
 	private Track initLocalSong(Cursor cursor) {
 		int idIndex = cursor.getColumnIndex(MediaStore.Audio.Media._ID);
 		int artistIndex = cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
 		int titleIndex = cursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
 		int dataIndex = cursor.getColumnIndex(MediaStore.Audio.Media.DATA);
-		int albumId = cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID);
+		int albumIdIndex = cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID);
 		int durationIndex = cursor.getColumnIndex(MediaStore.Audio.Media.DURATION);
 		Track track = new Track(Integer.parseInt(cursor.getString(idIndex)));
 		track.setArtist(cursor.getString(artistIndex));
 		track.setTitle(cursor.getString(titleIndex));
 		track.setPermalinkUrl(cursor.getString(dataIndex));
-		track.setArtworkUrl(getAlbumArt(albumId));
+		track.setArtworkUrl(getAlbumArt(cursor.getInt(albumIdIndex)));
 		track.setDuration(Integer.parseInt(cursor.getString(durationIndex)));
 		return track;
 	}

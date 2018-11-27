@@ -17,15 +17,15 @@
 
     <EditText
         android:id="@+id/edit_search"
-        android:layout_width="@dimen/dp_0"
-        android:layout_height="@dimen/dp_0"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_marginLeft="@dimen/dp_10"
         android:layout_marginRight="@dimen/dp_32"
         android:background="@null"
         android:gravity="right|bottom"
         android:hint="@string/edit_search"
         android:textColor="@color/color_white"
-        android:textColorHint="@color/color_white"
+        android:textColorHint="@color/color_black"
         android:textSize="@dimen/sp_18"
         app:layout_constraintBottom_toBottomOf="@id/image_logo"
         app:layout_constraintLeft_toRightOf="@id/image_logo"
@@ -34,24 +34,24 @@
 
     <View
         android:id="@+id/view_line"
-        android:layout_width="@dimen/dp_0"
+        android:layout_width="0dp"
         android:layout_height="@dimen/dp_2"
         android:layout_marginLeft="@dimen/dp_10"
         android:layout_marginRight="@dimen/dp_10"
-        android:background="@color/color_white"
+        android:background="@color/color_green"
         app:layout_constraintBottom_toBottomOf="@id/image_logo"
         app:layout_constraintLeft_toRightOf="@id/image_logo"
         app:layout_constraintRight_toRightOf="parent" />
 
-    <ImageButton
-        android:id="@+id/button_search"
-        android:layout_width="@dimen/dp_0"
-        android:layout_height="@dimen/dp_0"
+    <ImageView
+        android:id="@+id/image_search"
+        android:layout_width="@dimen/dp_18"
+        android:layout_height="@dimen/dp_18"
         android:layout_marginBottom="@dimen/dp_4"
         android:scaleType="fitXY"
-        app:layout_constraintBottom_toBottomOf="@id/view_line"
+        android:src="@drawable/search"
+        app:layout_constraintBottom_toBottomOf="@id/edit_search"
         app:layout_constraintLeft_toRightOf="@id/edit_search"
-        app:layout_constraintRight_toRightOf="@id/view_line"
-        app:layout_constraintTop_toTopOf="@id/image_logo" />
+        app:layout_constraintRight_toRightOf="@id/view_line" />
 
 </android.support.constraint.ConstraintLayout>

@@ -18,8 +18,9 @@
         android:id="@+id/indicator"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/dp_180"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/search_box"
         app:tabBackground="@drawable/indicator_selector"
         app:tabGravity="center"
         app:tabIndicatorHeight="0dp" />

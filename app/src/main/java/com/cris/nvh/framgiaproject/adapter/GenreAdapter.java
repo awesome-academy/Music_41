@@ -129,8 +129,15 @@ public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.GenreViewHol
 				}
 
 				public void bindData(int i) {
+					String imageUrl = mTracks.get(i).getArtworkUrl();
+					if (!imageUrl.equals("null")) {
+						Glide.with(itemView)
+								.load(imageUrl)
+								.into(mImageView);
+						return;
+					}
 					Glide.with(itemView)
-							.load(mTracks.get(i).getArtworkUrl())
+							.load(R.drawable.default_image)
 							.into(mImageView);
 				}
 			}

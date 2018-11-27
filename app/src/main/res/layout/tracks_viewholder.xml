@@ -5,9 +5,9 @@
 
     <ImageView
         android:id="@+id/image_track"
-        android:layout_marginLeft="@dimen/dp_10"
         android:layout_width="@dimen/dp_140"
-        android:layout_height="@dimen/dp_80"
-        android:scaleType="fitXY" />
+        android:layout_height="@dimen/dp_120"
+        android:layout_marginLeft="@dimen/dp_10"
+        android:scaleType="centerCrop" />
 
 </LinearLayout>

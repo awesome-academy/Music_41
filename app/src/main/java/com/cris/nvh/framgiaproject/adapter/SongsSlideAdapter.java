@@ -10,9 +10,6 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.cris.nvh.framgiaproject.R;
-import com.cris.nvh.framgiaproject.data.model.Track;
-
-import java.util.ArrayList;
 
 /**
  * Created by nvh
@@ -20,11 +17,8 @@ import java.util.ArrayList;
  */
 
 public class SongsSlideAdapter extends PagerAdapter {
-	private ArrayList<Track> mTracks;
-
-	public SongsSlideAdapter(ArrayList<Track> tracks) {
-		mTracks = tracks;
-	}
+	private int[] mImageResources = {R.drawable.image_slide1,
+			R.drawable.slide2, R.drawable.slide3};
 
 	@NonNull
 	@Override
@@ -33,9 +27,8 @@ public class SongsSlideAdapter extends PagerAdapter {
 		imageLayout = LayoutInflater.from(container.getContext())
 				.inflate(R.layout.layout_slide_images, container, false);
 		ImageView imageView = imageLayout.findViewById(R.id.image_slide);
-		String imageUrl = mTracks.get(position).getArtworkUrl();
 		Glide.with(imageLayout)
-				.load(imageUrl)
+				.load(mImageResources[position])
 				.apply(new RequestOptions()
 						.error(R.color.color_white)
 						.centerCrop())
@@ -52,7 +45,7 @@ public class SongsSlideAdapter extends PagerAdapter {
 
 	@Override
 	public int getCount() {
-		return mTracks == null ? 0 : mTracks.size();
+		return mImageResources == null ? 0 : mImageResources.length;
 	}
 
 	@Override

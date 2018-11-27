@@ -102,9 +102,9 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 		mReceiver = new BroadcastReceiver() {
 			@Override
 			public void onReceive(Context context, Intent intent) {
-				mGenres = (ArrayList<Genre>) intent.getSerializableExtra(genreKey);
+				mGenres = intent.getParcelableArrayListExtra(genreKey);
 				Bundle bundleHome = new Bundle();
-				bundleHome.putSerializable(genreKey, mGenres);
+				bundleHome.putParcelableArrayList(genreKey, mGenres);
 				mViewPagerAdapter.getItem(HOME_INDEX).setArguments(bundleHome);
 				mViewPager.setAdapter(mViewPagerAdapter);
 			}

@@ -84,7 +84,7 @@ public class SplashActivity extends AppCompatActivity implements SplashContract.
 	@Override
 	public void onloadApiSuccess(ArrayList<Genre> genres) {
 		Intent intent = new Intent(INTENT_ACTION)
-				.putExtra(KEY_GENRES, (Serializable) genres);
+				.putExtra(KEY_GENRES, genres);
 		LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 	}
 
