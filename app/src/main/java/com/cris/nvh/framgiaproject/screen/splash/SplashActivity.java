@@ -1,4 +1,4 @@
-package com.cris.nvh.framgiaproject.ui.splash_screen;
+package com.cris.nvh.framgiaproject.screen.splash;
 
 import android.Manifest;
 import android.content.Context;
@@ -21,7 +21,6 @@ import com.cris.nvh.framgiaproject.data.repository.TrackRepository;
 import com.cris.nvh.framgiaproject.data.source.local.TracksLocalDataSource;
 import com.cris.nvh.framgiaproject.data.source.remote.TracksRemoteDataSource;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
@@ -36,9 +35,11 @@ import static com.cris.nvh.framgiaproject.Constants.PARAMETER_LIMIT;
  */
 
 public class SplashActivity extends AppCompatActivity implements SplashContract.View {
-	public static final String INTENT_ACTION = "ACTION_LOAD_API";
-	private static final String KEY_TRACK = "tracks";
-	private static final String KEY_GENRES = "genres";
+	public static final String ACTION_LOAD_API = "ACTION_LOAD_API";
+	public static final String EXTRA_TRACKS =
+			"com.cris.nvh.framgiaproject.screen.splash.EXTRA_TRACKS";
+	public static final String EXTRA_GENRES =
+			"com.cris.nvh.framgiaproject.screen.splash.EXTRA_GENRES";
 	private static final int REQUEST_CODE = 10;
 	private static final String PERMISSION = Manifest.permission.READ_EXTERNAL_STORAGE;
 	private SplashContract.Presenter mSplashPresenter;
@@ -83,14 +84,14 @@ public class SplashActivity extends AppCompatActivity implements SplashContract.
 
 	@Override
 	public void onloadApiSuccess(ArrayList<Genre> genres) {
-		Intent intent = new Intent(INTENT_ACTION)
-				.putExtra(KEY_GENRES, genres);
+		Intent intent = new Intent(ACTION_LOAD_API)
+				.putExtra(EXTRA_GENRES, genres);
 		LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 	}
 
 	public static Intent getIntent(Context context, ArrayList<Track> tracks) {
 		Intent intent = new Intent(context, MainActivity.class);
-		intent.putParcelableArrayListExtra(KEY_TRACK, tracks);
+		intent.putParcelableArrayListExtra(EXTRA_TRACKS, tracks);
 		return intent;
 	}
 

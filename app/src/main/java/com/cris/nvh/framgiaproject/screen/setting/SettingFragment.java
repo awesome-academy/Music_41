@@ -1,4 +1,4 @@
-package com.cris.nvh.framgiaproject.ui.setting_screen;
+package com.cris.nvh.framgiaproject.screen.setting;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

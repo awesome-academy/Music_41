@@ -6,7 +6,7 @@
     android:background="@drawable/layout_mini_mediaplayer_bg">
 
     <ImageView
-        android:id="@+id/image_song"
+        android:id="@+id/image_track"
         android:layout_width="@dimen/dp_45"
         android:layout_height="@dimen/dp_45"
         android:layout_marginLeft="@dimen/dp_5"
@@ -24,8 +24,8 @@
         android:layout_marginTop="@dimen/dp_5"
         android:text="song name"
         android:textColor="@color/color_white"
-        app:layout_constraintLeft_toRightOf="@id/image_song"
-        app:layout_constraintTop_toTopOf="@id/image_song" />
+        app:layout_constraintLeft_toRightOf="@id/image_track"
+        app:layout_constraintTop_toTopOf="@id/image_track" />
 
     <TextView
         android:id="@+id/text_singer"
@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/dp_10"
         android:textColor="@color/color_white"
-        app:layout_constraintLeft_toRightOf="@id/image_song"
+        app:layout_constraintLeft_toRightOf="@id/image_track"
         app:layout_constraintTop_toBottomOf="@id/text_song_name" />
 
 

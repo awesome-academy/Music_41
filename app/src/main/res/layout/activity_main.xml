@@ -18,6 +18,7 @@
         android:id="@+id/navigation_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:background="@drawable/bottom_navigation_background"
         app:itemIconTint="@color/color_accent"
         app:itemTextColor="@color/color_accent"
         app:layout_constraintBottom_toBottomOf="parent"

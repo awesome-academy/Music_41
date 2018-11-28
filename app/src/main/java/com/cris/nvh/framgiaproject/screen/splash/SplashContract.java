@@ -1,4 +1,4 @@
-package com.cris.nvh.framgiaproject.ui.splash_screen;
+package com.cris.nvh.framgiaproject.screen.splash;
 
 import android.content.Context;
 
