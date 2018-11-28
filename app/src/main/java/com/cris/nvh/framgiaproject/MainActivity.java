@@ -15,13 +15,13 @@ import android.view.MenuItem;
 import com.cris.nvh.framgiaproject.adapter.ViewPagerAdapter;
 import com.cris.nvh.framgiaproject.data.model.Genre;
 import com.cris.nvh.framgiaproject.data.model.Track;
-import com.cris.nvh.framgiaproject.ui.home_screen.HomeFragment;
-import com.cris.nvh.framgiaproject.ui.my_music_screen.MyMusicFragment;
-import com.cris.nvh.framgiaproject.ui.setting_screen.SettingFragment;
+import com.cris.nvh.framgiaproject.screen.home.HomeFragment;
+import com.cris.nvh.framgiaproject.screen.mymusic.MyMusicFragment;
+import com.cris.nvh.framgiaproject.screen.setting.SettingFragment;
 
 import java.util.ArrayList;
 
-import static com.cris.nvh.framgiaproject.ui.splash_screen.SplashActivity.INTENT_ACTION;
+import static com.cris.nvh.framgiaproject.screen.splash.SplashActivity.INTENT_ACTION;
 
 public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener,
 		BottomNavigationView.OnNavigationItemSelectedListener {
