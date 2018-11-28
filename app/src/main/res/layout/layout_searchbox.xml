@@ -11,7 +11,7 @@
         android:layout_marginLeft="@dimen/dp_5"
         android:layout_marginTop="@dimen/dp_5"
         android:scaleType="fitXY"
-        android:src="@drawable/spotify"
+        android:src="@drawable/app_icon"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -22,11 +22,12 @@
         android:layout_marginLeft="@dimen/dp_10"
         android:layout_marginRight="@dimen/dp_32"
         android:background="@null"
+        android:cursorVisible="false"
         android:gravity="right|bottom"
         android:hint="@string/edit_search"
         android:textColor="@color/color_white"
-        android:textColorHint="@color/color_black"
-        android:textSize="@dimen/sp_18"
+        android:textColorHint="@color/color_white"
+        android:textSize="@dimen/sp_14"
         app:layout_constraintBottom_toBottomOf="@id/image_logo"
         app:layout_constraintLeft_toRightOf="@id/image_logo"
         app:layout_constraintRight_toRightOf="@id/view_line"
@@ -35,9 +36,9 @@
     <View
         android:id="@+id/view_line"
         android:layout_width="0dp"
-        android:layout_height="@dimen/dp_2"
+        android:layout_height="1px"
         android:layout_marginLeft="@dimen/dp_10"
-        android:layout_marginRight="@dimen/dp_10"
+        android:layout_marginRight="@dimen/dp_5"
         android:background="@color/color_green"
         app:layout_constraintBottom_toBottomOf="@id/image_logo"
         app:layout_constraintLeft_toRightOf="@id/image_logo"
@@ -45,8 +46,8 @@
 
     <ImageView
         android:id="@+id/image_search"
-        android:layout_width="@dimen/dp_18"
-        android:layout_height="@dimen/dp_18"
+        android:layout_width="@dimen/dp_15"
+        android:layout_height="@dimen/dp_15"
         android:layout_marginBottom="@dimen/dp_4"
         android:scaleType="fitXY"
         android:src="@drawable/search"

@@ -16,14 +16,15 @@ import com.cris.nvh.framgiaproject.data.model.Track;
 
 import java.util.ArrayList;
 
+import static com.cris.nvh.framgiaproject.screen.splash.SplashActivity.EXTRA_TRACKS;
+
 /**
  * Created by nvh
  * Contact: toiyeuthethao1997@gmail.com
  */
 
-public class MyMusicFragment extends Fragment implements TracksAdapter.OnClickItemSongListener {
+public class MyMusicFragment extends Fragment implements TracksAdapter.OnClickItemTrackListener {
 	private static final int DEFAULT_TOTAL_SONGS = 0;
-	private String trackKey = "tracks";
 	private RecyclerView mRecyclerViewLibrary;
 	private RecyclerView mRecyclerViewRecent;
 
@@ -51,15 +52,14 @@ public class MyMusicFragment extends Fragment implements TracksAdapter.OnClickIt
 
 	private ArrayList<Track> getLocalTracks() {
 		if (getArguments() != null) {
-			ArrayList<Track> tracks = (ArrayList<Track>)
-					getArguments().getSerializable(trackKey);
+			ArrayList<Track> tracks = getArguments().getParcelableArrayList(EXTRA_TRACKS);
 			return tracks;
 		}
 		return null;
 	}
 
 	@Override
-	public void clickItemSongListener(int position) {
+	public void clickItemTrackListener(int position) {
 	}
 
 	@Override

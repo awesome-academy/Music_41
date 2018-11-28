@@ -23,27 +23,27 @@ import java.util.List;
 
 public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.MyViewHolder> {
 	private List<Track> mTracks;
-	private OnClickItemSongListener mListener;
+	private OnClickItemTrackListener mListener;
 	private boolean mIsNowPlaying;
 	private boolean mIsRecentTracks;
 	private OnClickDeleteListener mDeleteListener;
 	private boolean mIsFavorite;
 
-	public TracksAdapter(OnClickItemSongListener listener) {
+	public TracksAdapter(OnClickItemTrackListener listener) {
 		mTracks = new ArrayList<>();
 		mListener = listener;
 	}
 
-	public TracksAdapter(List<Track> tracks, OnClickItemSongListener listener) {
+	public TracksAdapter(List<Track> tracks, OnClickItemTrackListener listener) {
 		mTracks = tracks;
 		mListener = listener;
 	}
 
-	public TracksAdapter(List<Track> tracks, OnClickItemSongListener songListener,
+	public TracksAdapter(List<Track> tracks, OnClickItemTrackListener trackListener,
 	                     OnClickDeleteListener deleteListener) {
 		mTracks = tracks;
 		mDeleteListener = deleteListener;
-		mListener = songListener;
+		mListener = trackListener;
 	}
 
 	@Override
@@ -70,7 +70,7 @@ public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.MyViewHold
 		private ImageView mFeature;
 		private ImageView mAddNowPlaying;
 		private ImageView mDeleteFavorite;
-		private OnClickItemSongListener mListener;
+		private OnClickItemTrackListener mListener;
 
 		public MyViewHolder(@NonNull View itemView) {
 			super(itemView);
@@ -99,7 +99,7 @@ public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.MyViewHold
 		}
 
 		public void bindData(Track track,
-		                     final OnClickItemSongListener listener) {
+		                     final OnClickItemTrackListener listener) {
 			mTrackName.setText(track.getTitle());
 			mSingerName.setText(track.getArtist());
 			setImage(mTrackImage, track.getArtworkUrl());
@@ -119,7 +119,7 @@ public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.MyViewHold
 					mDeleteListener.deleteFromFavorite(getAdapterPosition());
 					break;
 				default:
-					mListener.clickItemSongListener(getAdapterPosition());
+					mListener.clickItemTrackListener(getAdapterPosition());
 					break;
 			}
 		}
@@ -134,8 +134,8 @@ public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.MyViewHold
 		}
 	}
 
-	public interface OnClickItemSongListener {
-		void clickItemSongListener(int position);
+	public interface OnClickItemTrackListener {
+		void clickItemTrackListener(int position);
 
 		void showDialogFeatureTrack(int position);
 	}

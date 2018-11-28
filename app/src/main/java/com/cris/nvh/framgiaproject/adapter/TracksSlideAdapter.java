@@ -16,7 +16,7 @@ import com.cris.nvh.framgiaproject.R;
  * Contact: toiyeuthethao1997@gmail.com
  */
 
-public class SongsSlideAdapter extends PagerAdapter {
+public class TracksSlideAdapter extends PagerAdapter {
 	private int[] mImageResources = {R.drawable.image_slide1,
 			R.drawable.slide2, R.drawable.slide3};
 

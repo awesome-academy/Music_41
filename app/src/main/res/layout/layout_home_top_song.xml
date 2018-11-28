@@ -16,13 +16,12 @@
 
     <android.support.design.widget.TabLayout
         android:id="@+id/indicator"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/dp_180"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/search_box"
+        android:layout_width="@dimen/dp_24"
+        android:layout_height="@dimen/dp_15"
+        android:layout_marginRight="@dimen/dp_10"
+        app:layout_constraintBottom_toBottomOf="@id/pager_images"
+        app:layout_constraintRight_toRightOf="parent"
         app:tabBackground="@drawable/indicator_selector"
-        app:tabGravity="center"
         app:tabIndicatorHeight="0dp" />
 
 </android.support.constraint.ConstraintLayout>

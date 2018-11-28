@@ -18,7 +18,7 @@ import com.cris.nvh.framgiaproject.adapter.TracksAdapter;
  * Contact: toiyeuthethao1997@gmail.com
  */
 
-public class NowPlayingFragment extends Fragment implements TracksAdapter.OnClickItemSongListener {
+public class NowPlayingFragment extends Fragment implements TracksAdapter.OnClickItemTrackListener {
 	private RecyclerView mRecyclerView;
 	private ImageView mImageBack;
 
@@ -45,7 +45,7 @@ public class NowPlayingFragment extends Fragment implements TracksAdapter.OnClic
 	}
 
 	@Override
-	public void clickItemSongListener(int position) {
+	public void clickItemTrackListener(int position) {
 
 	}
 

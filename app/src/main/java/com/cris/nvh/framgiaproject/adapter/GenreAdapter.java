@@ -54,7 +54,7 @@ public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.GenreViewHol
 		return mGenres == null ? 0 : mGenres.size();
 	}
 
-	class GenreViewHolder extends RecyclerView.ViewHolder {
+	public static class GenreViewHolder extends RecyclerView.ViewHolder {
 		private TextView mTextView;
 		private RecyclerView mRecyclerView;
 
@@ -142,5 +142,9 @@ public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.GenreViewHol
 				}
 			}
 		}
+	}
+
+	public interface GenreClickListener {
+		void onItemClick(Genre genre);
 	}
 }

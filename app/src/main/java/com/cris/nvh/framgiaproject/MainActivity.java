@@ -21,15 +21,15 @@ import com.cris.nvh.framgiaproject.screen.setting.SettingFragment;
 
 import java.util.ArrayList;
 
-import static com.cris.nvh.framgiaproject.screen.splash.SplashActivity.INTENT_ACTION;
+import static com.cris.nvh.framgiaproject.screen.splash.SplashActivity.ACTION_LOAD_API;
+import static com.cris.nvh.framgiaproject.screen.splash.SplashActivity.EXTRA_GENRES;
+import static com.cris.nvh.framgiaproject.screen.splash.SplashActivity.EXTRA_TRACKS;
 
 public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener,
 		BottomNavigationView.OnNavigationItemSelectedListener {
 	private static final int HOME_INDEX = 0;
 	private static final int MY_MUSIC_INDEX = 1;
 	private static final int SETTING_INDEX = 2;
-	private String genreKey = "genres";
-	private String trackKey = "tracks";
 	private ViewPager mViewPager;
 	private ViewPagerAdapter mViewPagerAdapter;
 	private BottomNavigationView mBottomNavigationView;
@@ -41,15 +41,9 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		mViewPager = findViewById(R.id.view_pager);
-		mBottomNavigationView = findViewById(R.id.navigation_container);
-		mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-		mTracks = getIntent().getParcelableArrayListExtra(trackKey);
+		initView();
 		initReceiver();
-		initFragments(mTracks);
-		LocalBroadcastManager
-				.getInstance(this)
-				.registerReceiver(mReceiver, new IntentFilter(INTENT_ACTION));
+		registerReceiver();
 		mBottomNavigationView.setOnNavigationItemSelectedListener(this);
 		mViewPager.setOnPageChangeListener(this);
 	}
@@ -65,6 +59,8 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 				break;
 			case R.id.tab_setting:
 				mViewPager.setCurrentItem(SETTING_INDEX);
+				break;
+			default:
 				break;
 		}
 		return false;
@@ -85,12 +81,20 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
 	}
 
-	public void initFragments(ArrayList<Track> tracks) {
+	private void initView() {
+		mViewPager = findViewById(R.id.view_pager);
+		mBottomNavigationView = findViewById(R.id.navigation_container);
+		mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+		mTracks = getIntent().getParcelableArrayListExtra(EXTRA_TRACKS);
+		initFragments(mTracks);
+	}
+
+	private void initFragments(ArrayList<Track> tracks) {
 		HomeFragment homeFragment = new HomeFragment();
 		MyMusicFragment myMusicFragment = new MyMusicFragment();
 		SettingFragment settingFragment = new SettingFragment();
 		Bundle bundleMyMusic = new Bundle();
-		bundleMyMusic.putSerializable(trackKey, tracks);
+		bundleMyMusic.putParcelableArrayList(EXTRA_TRACKS, tracks);
 		myMusicFragment.setArguments(bundleMyMusic);
 		mViewPagerAdapter.addFragment(homeFragment);
 		mViewPagerAdapter.addFragment(myMusicFragment);
@@ -102,12 +106,18 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 		mReceiver = new BroadcastReceiver() {
 			@Override
 			public void onReceive(Context context, Intent intent) {
-				mGenres = intent.getParcelableArrayListExtra(genreKey);
+				mGenres = intent.getParcelableArrayListExtra(EXTRA_GENRES);
 				Bundle bundleHome = new Bundle();
-				bundleHome.putParcelableArrayList(genreKey, mGenres);
+				bundleHome.putParcelableArrayList(EXTRA_GENRES, mGenres);
 				mViewPagerAdapter.getItem(HOME_INDEX).setArguments(bundleHome);
 				mViewPager.setAdapter(mViewPagerAdapter);
 			}
 		};
+	}
+
+	private void registerReceiver() {
+		LocalBroadcastManager
+				.getInstance(this)
+				.registerReceiver(mReceiver, new IntentFilter(ACTION_LOAD_API));
 	}
 }
