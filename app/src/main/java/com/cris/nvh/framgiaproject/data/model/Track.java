@@ -19,6 +19,7 @@ public class Track implements Parcelable {
 	private String mTitle;
 	private String mArtist;
 	private String mArtistImage;
+	private boolean mIsOffline;
 
 	public final static Parcelable.Creator<Track> CREATOR = new Creator<Track>() {
 		@SuppressWarnings({
@@ -138,5 +139,13 @@ public class Track implements Parcelable {
 
 	public void setArtistImage(String artistImage) {
 		mArtistImage = artistImage;
+	}
+
+	public boolean isOffline() {
+		return mIsOffline;
+	}
+
+	public void setOffline(boolean offline) {
+		mIsOffline = offline;
 	}
 }

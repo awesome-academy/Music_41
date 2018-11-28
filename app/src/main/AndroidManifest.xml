@@ -27,6 +27,8 @@
         <activity android:name=".screen.playing.PlayActivity" />
         <activity android:name=".screen.genres.GenresActivity" />
         <activity android:name=".screen.search.SearchActivity" />
+
+        <service android:name=".service.PlayMusicService" />
     </application>
 
 </manifest>
