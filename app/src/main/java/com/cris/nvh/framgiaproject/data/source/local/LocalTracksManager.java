@@ -106,6 +106,7 @@ public class LocalTracksManager {
 		track.setPermalinkUrl(cursor.getString(dataIndex));
 		track.setArtworkUrl(getAlbumArt(cursor.getInt(albumIdIndex)));
 		track.setDuration(Integer.parseInt(cursor.getString(durationIndex)));
+		track.setOffline(true);
 		return track;
 	}
 }

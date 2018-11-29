@@ -65,4 +65,9 @@ public class MyMusicFragment extends Fragment implements TracksAdapter.OnClickIt
 	@Override
 	public void showDialogFeatureTrack(int position) {
 	}
+
+	public static MyMusicFragment newInstance() {
+		MyMusicFragment myMusicFragment = new MyMusicFragment();
+		return myMusicFragment;
+	}
 }
