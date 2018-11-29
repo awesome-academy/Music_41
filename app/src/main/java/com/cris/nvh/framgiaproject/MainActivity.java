@@ -1,10 +1,16 @@
 package com.cris.nvh.framgiaproject;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.content.LocalBroadcastManager;
@@ -18,6 +24,7 @@ import com.cris.nvh.framgiaproject.data.model.Track;
 import com.cris.nvh.framgiaproject.screen.home.HomeFragment;
 import com.cris.nvh.framgiaproject.screen.mymusic.MyMusicFragment;
 import com.cris.nvh.framgiaproject.screen.setting.SettingFragment;
+import com.cris.nvh.framgiaproject.service.PlayMusicService;
 
 import java.util.ArrayList;
 
@@ -36,16 +43,26 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 	private ArrayList<Genre> mGenres;
 	private ArrayList<Track> mTracks;
 	private BroadcastReceiver mReceiver;
+	private PlayMusicService mService;
+	private Handler mHandler;
+	private ServiceConnection mConnection;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		initConnection();
+		initHandler();
+		initService();
 		initView();
 		initReceiver();
 		registerReceiver();
-		mBottomNavigationView.setOnNavigationItemSelectedListener(this);
-		mViewPager.setOnPageChangeListener(this);
+	}
+
+	@Override
+	protected void onDestroy() {
+		unbindService(mConnection);
+		super.onDestroy();
 	}
 
 	@Override
@@ -68,7 +85,6 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
 	@Override
 	public void onPageScrolled(int i, float v, int i1) {
-
 	}
 
 	@Override
@@ -78,7 +94,23 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
 	@Override
 	public void onPageScrollStateChanged(int i) {
+	}
 
+	public static Intent getMyServiceIntent(Context context) {
+		Intent intent = new Intent(context, PlayMusicService.class);
+		return intent;
+	}
+
+	private void initService() {
+		Intent serviceIntent = getMyServiceIntent(this);
+		bindService(serviceIntent, mConnection, Context.BIND_AUTO_CREATE);
+		if (mService == null) {
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+				startForegroundService(serviceIntent);
+			} else {
+				startService(serviceIntent);
+			}
+		}
 	}
 
 	private void initView() {
@@ -87,12 +119,14 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 		mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
 		mTracks = getIntent().getParcelableArrayListExtra(EXTRA_TRACKS);
 		initFragments(mTracks);
+		mBottomNavigationView.setOnNavigationItemSelectedListener(this);
+		mViewPager.setOnPageChangeListener(this);
 	}
 
 	private void initFragments(ArrayList<Track> tracks) {
-		HomeFragment homeFragment = new HomeFragment();
-		MyMusicFragment myMusicFragment = new MyMusicFragment();
-		SettingFragment settingFragment = new SettingFragment();
+		HomeFragment homeFragment = HomeFragment.newInstance();
+		MyMusicFragment myMusicFragment = MyMusicFragment.newInstance();
+		SettingFragment settingFragment = SettingFragment.newInstance();
 		Bundle bundleMyMusic = new Bundle();
 		bundleMyMusic.putParcelableArrayList(EXTRA_TRACKS, tracks);
 		myMusicFragment.setArguments(bundleMyMusic);
@@ -119,5 +153,30 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 		LocalBroadcastManager
 				.getInstance(this)
 				.registerReceiver(mReceiver, new IntentFilter(ACTION_LOAD_API));
+	}
+
+	private void initHandler() {
+		mHandler = new Handler() {
+			@Override
+			public void handleMessage(Message msg) {
+				super.handleMessage(msg);
+			}
+		};
+	}
+
+	private void initConnection() {
+		mConnection = new ServiceConnection() {
+			@Override
+			public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+				PlayMusicService.LocalBinder binder = (PlayMusicService.LocalBinder) iBinder;
+				mService = binder.getService();
+				mService.setUIHandler(mHandler);
+			}
+
+			@Override
+			public void onServiceDisconnected(ComponentName componentName) {
+				unbindService(mConnection);
+			}
+		};
 	}
 }

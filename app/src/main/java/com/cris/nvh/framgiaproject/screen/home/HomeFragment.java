@@ -1,9 +1,11 @@
 package com.cris.nvh.framgiaproject.screen.home;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.os.IBinder;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -18,17 +20,19 @@ import android.widget.ImageView;
 import com.cris.nvh.framgiaproject.MiniMediaPlayer;
 import com.cris.nvh.framgiaproject.R;
 import com.cris.nvh.framgiaproject.adapter.GenreAdapter;
-import com.cris.nvh.framgiaproject.adapter.TracksSlideAdapter;
 import com.cris.nvh.framgiaproject.adapter.TracksAdapter;
+import com.cris.nvh.framgiaproject.adapter.TracksSlideAdapter;
 import com.cris.nvh.framgiaproject.data.model.Genre;
 import com.cris.nvh.framgiaproject.screen.genres.GenresActivity;
 import com.cris.nvh.framgiaproject.screen.playing.PlayActivity;
 import com.cris.nvh.framgiaproject.screen.search.SearchActivity;
+import com.cris.nvh.framgiaproject.service.PlayMusicService;
 
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static com.cris.nvh.framgiaproject.MainActivity.getMyServiceIntent;
 import static com.cris.nvh.framgiaproject.screen.splash.SplashActivity.EXTRA_GENRES;
 
 /**
@@ -45,6 +49,7 @@ public class HomeFragment extends Fragment implements GenreAdapter.GenreClickLis
 	private static final int SIZE_BOUND = 10;
 	private static final int FIRST_PAGE = 0;
 	private static final int PLUS = 1;
+	private PlayMusicService mService;
 	private ViewPager mViewPager;
 	private TabLayout mTabLayout;
 	private RecyclerView mRecyclerView;
@@ -53,8 +58,8 @@ public class HomeFragment extends Fragment implements GenreAdapter.GenreClickLis
 	private View mViewMiniMediaPlayer;
 	private MiniMediaPlayer mMiniMediaPlayer;
 	private ArrayList<Genre> mGenres;
+	private ServiceConnection mConnection;
 
-	@Nullable
 	@Override
 	public View onCreateView(LayoutInflater inflater,
 	                         ViewGroup container, Bundle savedInstanceState) {
@@ -62,20 +67,24 @@ public class HomeFragment extends Fragment implements GenreAdapter.GenreClickLis
 				.from(container.getContext())
 				.inflate(R.layout.fragment_home, container, false);
 		initView(view);
+		bindToService();
 		return view;
 	}
 
 	@Override
-	public void onCreate(@Nullable Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		getActivity().unbindService(mConnection);
 	}
 
 	@Override
 	public void onClick(View view) {
 		switch (view.getId()) {
-			case R.id.mini_mediaplayer:
-				mMiniMediaPlayer.onClick(mViewMiniMediaPlayer);
-				break;
 			case R.id.image_search:
 				startActivity(HomeFragment
 						.getSearchActivityIntent(getActivity(), mEditSearch.getText().toString()));
@@ -96,7 +105,11 @@ public class HomeFragment extends Fragment implements GenreAdapter.GenreClickLis
 
 	@Override
 	public void showDialogFeatureTrack(int position) {
+	}
 
+	public static HomeFragment newInstance() {
+		HomeFragment homeFragment = new HomeFragment();
+		return homeFragment;
 	}
 
 	public static Intent getPlayActivityIntent(Context context) {
@@ -150,6 +163,24 @@ public class HomeFragment extends Fragment implements GenreAdapter.GenreClickLis
 		Timer timer;
 		timer = new Timer();
 		timer.scheduleAtFixedRate(new RemindTask(), 0, time);
+	}
+
+	private void bindToService() {
+		mConnection = new ServiceConnection() {
+			@Override
+			public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+				PlayMusicService.LocalBinder binder = (PlayMusicService.LocalBinder) iBinder;
+				mService = binder.getService();
+				mMiniMediaPlayer.setService(mService);
+			}
+
+			@Override
+			public void onServiceDisconnected(ComponentName componentName) {
+				getActivity().unbindService(mConnection);
+			}
+		};
+		getActivity().bindService(getMyServiceIntent(getActivity()),
+				mConnection, Context.BIND_AUTO_CREATE);
 	}
 
 	private class RemindTask extends TimerTask {

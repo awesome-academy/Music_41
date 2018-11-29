@@ -7,6 +7,9 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.cris.nvh.framgiaproject.R;
 import com.cris.nvh.framgiaproject.adapter.ViewPagerAdapter;
+import com.cris.nvh.framgiaproject.data.model.Track;
+
+import static com.cris.nvh.framgiaproject.screen.mymusic.MyMusicFragment.EXTRA_TRACK;
 
 /**
  * Created by nvh
@@ -20,13 +23,18 @@ public class PlayActivity extends AppCompatActivity {
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_play);
+		Track track = getIntent().getExtras().getParcelable(EXTRA_TRACK);
 		mViewPager = findViewById(R.id.view_pager);
-		initFragments();
+		initFragments(track);
 	}
 
-	private void initFragments() {
+	private void initFragments(Track track) {
+		Bundle bundle = new Bundle();
+		bundle.putParcelable(EXTRA_TRACK, track);
+		PlayFragment playFragment = PlayFragment.newInstance();
+		playFragment.setArguments(bundle);
 		ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-		viewPagerAdapter.addFragment(PlayFragment.newInstance());
+		viewPagerAdapter.addFragment(playFragment);
 		viewPagerAdapter.addFragment(NowPlayingFragment.newInstance());
 		mViewPager.setAdapter(viewPagerAdapter);
 	}

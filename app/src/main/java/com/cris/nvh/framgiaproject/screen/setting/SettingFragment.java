@@ -19,4 +19,9 @@ public class SettingFragment extends Fragment {
 	                         ViewGroup container, Bundle savedInstanceState) {
 		return inflater.inflate(R.layout.fragment_setting, container, false);
 	}
+
+	public static SettingFragment newInstance() {
+		SettingFragment settingFragment = new SettingFragment();
+		return settingFragment;
+	}
 }

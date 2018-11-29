@@ -58,29 +58,29 @@
         android:src="@drawable/ic_shuffle"
         app:layout_constraintBottom_toBottomOf="@id/view_control_bar"
         app:layout_constraintLeft_toLeftOf="@id/view_control_bar"
-        app:layout_constraintRight_toLeftOf="@id/image_previous"
+        app:layout_constraintRight_toLeftOf="@id/button_previous"
         app:layout_constraintTop_toTopOf="@id/view_control_bar"
         app:layout_constraintVertical_chainStyle="spread_inside" />
 
     <ImageView
-        android:id="@+id/image_previous"
+        android:id="@+id/button_previous"
         android:layout_width="@dimen/dp_38"
         android:layout_height="@dimen/dp_38"
         android:src="@drawable/ic_previous"
         app:layout_constraintBottom_toBottomOf="@id/image_shuffle"
         app:layout_constraintLeft_toRightOf="@id/image_shuffle"
-        app:layout_constraintRight_toLeftOf="@id/image_play"
+        app:layout_constraintRight_toLeftOf="@id/button_change_state"
         app:layout_constraintTop_toTopOf="@id/image_shuffle" />
 
     <ImageView
-        android:id="@+id/image_play"
+        android:id="@+id/button_change_state"
         android:layout_width="@dimen/dp_38"
         android:layout_height="@dimen/dp_38"
         android:src="@drawable/ic_play"
-        app:layout_constraintBottom_toBottomOf="@id/image_previous"
-        app:layout_constraintLeft_toRightOf="@id/image_previous"
-        app:layout_constraintRight_toLeftOf="@id/image_next"
-        app:layout_constraintTop_toTopOf="@id/image_previous" />
+        app:layout_constraintBottom_toBottomOf="@id/button_previous"
+        app:layout_constraintLeft_toRightOf="@id/button_previous"
+        app:layout_constraintRight_toLeftOf="@id/button_next"
+        app:layout_constraintTop_toTopOf="@id/button_previous" />
 
     <ProgressBar
         android:id="@+id/progress_play_waiting"
@@ -89,29 +89,29 @@
         android:layout_height="@dimen/dp_48"
         android:src="@drawable/ic_play"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/image_play"
-        app:layout_constraintLeft_toLeftOf="@id/image_play"
-        app:layout_constraintRight_toRightOf="@id/image_play"
-        app:layout_constraintTop_toTopOf="@id/image_play" />
+        app:layout_constraintBottom_toBottomOf="@id/button_change_state"
+        app:layout_constraintLeft_toLeftOf="@id/button_change_state"
+        app:layout_constraintRight_toRightOf="@id/button_change_state"
+        app:layout_constraintTop_toTopOf="@id/button_change_state" />
 
     <ImageView
-        android:id="@+id/image_next"
+        android:id="@+id/button_next"
         android:layout_width="@dimen/dp_38"
         android:layout_height="@dimen/dp_38"
         android:src="@drawable/ic_next"
-        app:layout_constraintBottom_toBottomOf="@id/image_play"
-        app:layout_constraintLeft_toRightOf="@id/image_play"
+        app:layout_constraintBottom_toBottomOf="@id/button_change_state"
+        app:layout_constraintLeft_toRightOf="@id/button_change_state"
         app:layout_constraintRight_toLeftOf="@id/image_loop"
-        app:layout_constraintTop_toTopOf="@id/image_play" />
+        app:layout_constraintTop_toTopOf="@id/button_change_state" />
 
     <ImageView
         android:id="@+id/image_loop"
         android:layout_width="@dimen/dp_38"
         android:layout_height="@dimen/dp_38"
         android:src="@drawable/ic_loop"
-        app:layout_constraintBottom_toBottomOf="@id/image_next"
-        app:layout_constraintLeft_toRightOf="@id/image_next"
+        app:layout_constraintBottom_toBottomOf="@id/button_next"
+        app:layout_constraintLeft_toRightOf="@id/button_next"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/image_next" />
+        app:layout_constraintTop_toTopOf="@id/button_next" />
 
 </android.support.constraint.ConstraintLayout>

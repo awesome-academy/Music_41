@@ -13,11 +13,9 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.cris.nvh.framgiaproject.R;
+import com.cris.nvh.framgiaproject.data.model.Track;
 
-/**
- * Created by nvh
- * Contact: toiyeuthethao1997@gmail.com
- */
+import static com.cris.nvh.framgiaproject.screen.mymusic.MyMusicFragment.EXTRA_TRACK;
 
 public class PlayFragment extends Fragment {
 	private static final int START_ANGLE = 0;
@@ -41,10 +39,18 @@ public class PlayFragment extends Fragment {
 	}
 
 	private void initView(View view) {
+		Track track = getArguments().getParcelable(EXTRA_TRACK);
 		mImageAlbum = view.findViewById(R.id.image_album);
+		Object uri;
+		if (track.getArtworkUrl() != null) {
+			uri = track.getArtworkUrl();
+		} else {
+			uri = R.drawable.default_album;
+		}
 		Glide.with(view)
-				.load(R.drawable.default_album)
-				.apply(RequestOptions.circleCropTransform())
+				.load(uri)
+				.apply(RequestOptions
+						.circleCropTransform())
 				.into(mImageAlbum);
 		RotateAnimation rotate = new RotateAnimation(START_ANGLE, END_ANGLE,
 				Animation.RELATIVE_TO_SELF, PIVOT, Animation.RELATIVE_TO_SELF, PIVOT);
