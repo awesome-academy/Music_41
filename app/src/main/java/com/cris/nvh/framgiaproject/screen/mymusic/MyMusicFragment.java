@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -26,13 +27,15 @@ import com.cris.nvh.framgiaproject.screen.listtracks.ListTracksActivity;
 import com.cris.nvh.framgiaproject.screen.playing.PlayActivity;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import static com.cris.nvh.framgiaproject.screen.playing.PlayActivity.EXTRA_PLAY_INDEX;
+import static com.cris.nvh.framgiaproject.screen.playing.PlayActivity.EXTRA_PLAY_TRACKS;
 import static com.cris.nvh.framgiaproject.screen.splash.SplashActivity.EXTRA_TRACKS;
+
 
 public class MyMusicFragment extends Fragment implements View.OnClickListener,
 		LibraryAdapter.OnClickItemListener, TracksAdapter.OnClickItemTrackListener {
-	public static final String EXTRA_TRACK =
-			"com.cris.nvh.framgiaproject.screen.mymusic.EXTRA_TRACK";
 	private static final int DEFAULT_TOTAL_SONGS = 0;
 	private static final String TAG = "DIALOG";
 	private static String[] sOptions = {"Delete", "Add to favorite"};
@@ -54,7 +57,7 @@ public class MyMusicFragment extends Fragment implements View.OnClickListener,
 
 	@Override
 	public void clickItemTrackListener(int position) {
-		startActivity(getPlayActivityIntent(getActivity(), getLocalTracks().get(position)));
+		startActivity(getPlayActivityIntent(getActivity(), getLocalTracks(), position));
 	}
 
 	@Override
@@ -80,14 +83,19 @@ public class MyMusicFragment extends Fragment implements View.OnClickListener,
 		}
 	}
 
-	public static Intent getPlayActivityIntent(Context context, Track track) {
+	public static Intent getPlayActivityIntent(Context context, List<Track> tracks, int index) {
 		Intent intent = new Intent(context, PlayActivity.class);
-		return intent.putExtra(EXTRA_TRACK, track);
+		intent.putExtra(EXTRA_PLAY_INDEX, index);
+		intent.putParcelableArrayListExtra(EXTRA_PLAY_TRACKS,
+				(ArrayList<? extends Parcelable>) tracks);
+		return intent;
 	}
 
-	public static Intent getListTracksActivityIntent(Context context, ArrayList<Track> tracks) {
+	public static Intent getListTracksActivityIntent(Context context, List<Track> tracks) {
 		Intent intent = new Intent(context, ListTracksActivity.class);
-		return intent.putParcelableArrayListExtra(EXTRA_TRACKS, tracks);
+		intent.putParcelableArrayListExtra(EXTRA_TRACKS,
+				(ArrayList<? extends Parcelable>) tracks);
+		return intent;
 	}
 
 	public static MyMusicFragment newInstance() {
@@ -96,7 +104,7 @@ public class MyMusicFragment extends Fragment implements View.OnClickListener,
 	}
 
 	private void initView(View view) {
-		ArrayList<Track> tracks = getLocalTracks();
+		List<Track> tracks = getLocalTracks();
 		mRecyclerViewLibrary = view.findViewById(R.id.recycler_library);
 		mRecyclerViewRecent = view.findViewById(R.id.recycler_recent);
 		mButtonSearch = view.findViewById(R.id.image_search);
@@ -109,9 +117,9 @@ public class MyMusicFragment extends Fragment implements View.OnClickListener,
 		mButtonSearch.setOnClickListener(this);
 	}
 
-	private ArrayList<Track> getLocalTracks() {
+	private List<Track> getLocalTracks() {
 		if (getArguments() != null) {
-			ArrayList<Track> tracks = getArguments().getParcelableArrayList(EXTRA_TRACKS);
+			List<Track> tracks = getArguments().getParcelableArrayList(EXTRA_TRACKS);
 			return tracks;
 		}
 		return null;

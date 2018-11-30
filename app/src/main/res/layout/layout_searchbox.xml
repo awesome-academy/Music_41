@@ -2,10 +2,11 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:focusableInTouchMode="true">
 
     <ImageView
-        android:id="@+id/image_logo"
+        android:id="@+id/image_view"
         android:layout_width="@dimen/dp_32"
         android:layout_height="@dimen/dp_32"
         android:layout_marginLeft="@dimen/dp_5"
@@ -28,10 +29,10 @@
         android:textColor="@color/color_white"
         android:textColorHint="@color/color_white"
         android:textSize="@dimen/sp_14"
-        app:layout_constraintBottom_toBottomOf="@id/image_logo"
-        app:layout_constraintLeft_toRightOf="@id/image_logo"
+        app:layout_constraintBottom_toBottomOf="@id/image_view"
+        app:layout_constraintLeft_toRightOf="@id/image_view"
         app:layout_constraintRight_toRightOf="@id/view_line"
-        app:layout_constraintTop_toTopOf="@id/image_logo" />
+        app:layout_constraintTop_toTopOf="@id/image_view" />
 
     <View
         android:id="@+id/view_line"
@@ -40,8 +41,8 @@
         android:layout_marginLeft="@dimen/dp_10"
         android:layout_marginRight="@dimen/dp_5"
         android:background="@color/color_green"
-        app:layout_constraintBottom_toBottomOf="@id/image_logo"
-        app:layout_constraintLeft_toRightOf="@id/image_logo"
+        app:layout_constraintBottom_toBottomOf="@id/image_view"
+        app:layout_constraintLeft_toRightOf="@id/image_view"
         app:layout_constraintRight_toRightOf="parent" />
 
     <ImageView

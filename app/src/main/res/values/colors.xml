@@ -5,9 +5,7 @@
     <color name="color_accent">#FF4081</color>
     <color name="color_white">#FFFF</color>
     <color name="color_black">#000</color>
-    <color name="color_mini_mediaplayer">#B1BCBE</color>
     <color name="color_gray">#323737</color>
     <color name="color_green">#66EB04</color>
     <color name="color_blue">#1571AD</color>
-    <color name="color_bold_blue">#111387</color>
 </resources>

@@ -1,10 +1,13 @@
 package com.cris.nvh.framgiaproject;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cris.nvh.framgiaproject.screen.home.HomeFragment;
+import com.cris.nvh.framgiaproject.screen.playing.PlayActivity;
 import com.cris.nvh.framgiaproject.service.PlayMusicService;
 
 public class MiniMediaPlayer implements View.OnClickListener {
@@ -40,11 +43,16 @@ public class MiniMediaPlayer implements View.OnClickListener {
 				break;
 			case R.id.image_track:
 				mView.getContext()
-						.startActivity(HomeFragment.getPlayActivityIntent(mView.getContext()));
+						.startActivity(getPlayActivityIntent(mView.getContext()));
 				break;
 			default:
 				break;
 		}
+	}
+
+	private Intent getPlayActivityIntent(Context context) {
+		Intent intent = new Intent(context, PlayActivity.class);
+		return intent;
 	}
 
 	public TextView getTrackName() {

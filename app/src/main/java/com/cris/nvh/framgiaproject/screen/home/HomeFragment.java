@@ -1,11 +1,13 @@
 package com.cris.nvh.framgiaproject.screen.home;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Parcelable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -20,19 +22,22 @@ import android.widget.ImageView;
 import com.cris.nvh.framgiaproject.MiniMediaPlayer;
 import com.cris.nvh.framgiaproject.R;
 import com.cris.nvh.framgiaproject.adapter.GenreAdapter;
-import com.cris.nvh.framgiaproject.adapter.TracksAdapter;
 import com.cris.nvh.framgiaproject.adapter.TracksSlideAdapter;
 import com.cris.nvh.framgiaproject.data.model.Genre;
+import com.cris.nvh.framgiaproject.data.model.Track;
 import com.cris.nvh.framgiaproject.screen.genres.GenresActivity;
 import com.cris.nvh.framgiaproject.screen.playing.PlayActivity;
 import com.cris.nvh.framgiaproject.screen.search.SearchActivity;
 import com.cris.nvh.framgiaproject.service.PlayMusicService;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import static com.cris.nvh.framgiaproject.MainActivity.getMyServiceIntent;
+import static com.cris.nvh.framgiaproject.screen.playing.PlayActivity.EXTRA_PLAY_INDEX;
+import static com.cris.nvh.framgiaproject.screen.playing.PlayActivity.EXTRA_PLAY_TRACKS;
 import static com.cris.nvh.framgiaproject.screen.splash.SplashActivity.EXTRA_GENRES;
 
 /**
@@ -40,15 +45,17 @@ import static com.cris.nvh.framgiaproject.screen.splash.SplashActivity.EXTRA_GEN
  * Contact: toiyeuthethao1997@gmail.com
  */
 
-public class HomeFragment extends Fragment implements GenreAdapter.GenreClickListener,
-		TracksAdapter.OnClickItemTrackListener, View.OnClickListener {
+public class HomeFragment extends Fragment implements GenreAdapter.GenreClickListener, View.OnClickListener {
 	public static final String EXTRA_SEARCH =
 			"com.cris.nvh.framgiaproject.screen.home.EXTRA_SEARCH";
+	public static final String EXTRA_HOME_TRACKS = "com.cris.nvh.framgiaproject.screen.home.EXTRA_TRACKS";
+	public static final String EXTRA_HOME_INDEX = "com.cris.nvh.framgiaproject.screen.home.EXTRA_INDEX";
 	private static final int ALL_MUSIC_INDEX = 0;
 	private static final int DURATION = 8000;
 	private static final int SIZE_BOUND = 10;
 	private static final int FIRST_PAGE = 0;
 	private static final int PLUS = 1;
+
 	private PlayMusicService mService;
 	private ViewPager mViewPager;
 	private TabLayout mTabLayout;
@@ -57,8 +64,15 @@ public class HomeFragment extends Fragment implements GenreAdapter.GenreClickLis
 	private EditText mEditSearch;
 	private View mViewMiniMediaPlayer;
 	private MiniMediaPlayer mMiniMediaPlayer;
-	private ArrayList<Genre> mGenres;
+	private List<Genre> mGenres;
 	private ServiceConnection mConnection;
+	private Activity mActivity;
+
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		mActivity = activity;
+	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater,
@@ -86,25 +100,22 @@ public class HomeFragment extends Fragment implements GenreAdapter.GenreClickLis
 	public void onClick(View view) {
 		switch (view.getId()) {
 			case R.id.image_search:
-				startActivity(HomeFragment
-						.getSearchActivityIntent(getActivity(), mEditSearch.getText().toString()));
+				startActivity(getSearchActivityIntent(getActivity(),
+						mEditSearch.getText().toString()));
 			default:
 				break;
 		}
 	}
 
 	@Override
-	public void onItemClick(Genre genre) {
-		startActivity(HomeFragment.getGenresActivityIntent(getActivity(), genre));
+	public void onItemClick(int index) {
+		startActivity(getGenresActivityIntent(getActivity(), mGenres.get(index)));
 	}
 
 	@Override
-	public void clickItemTrackListener(int position) {
-		startActivity(HomeFragment.getPlayActivityIntent(getActivity()));
-	}
-
-	@Override
-	public void showDialogFeatureTrack(int position) {
+	public void onTrackClick(int genreIndex, int trackIndex) {
+		startActivity(getPlayActivityIntent(getActivity(),
+				(List<Track>) mGenres.get(genreIndex).getTracks(), trackIndex));
 	}
 
 	public static HomeFragment newInstance() {
@@ -112,8 +123,11 @@ public class HomeFragment extends Fragment implements GenreAdapter.GenreClickLis
 		return homeFragment;
 	}
 
-	public static Intent getPlayActivityIntent(Context context) {
+	public static Intent getPlayActivityIntent(Context context, List<Track> tracks, int index) {
 		Intent intent = new Intent(context, PlayActivity.class);
+		intent.putParcelableArrayListExtra(EXTRA_PLAY_TRACKS,
+				(ArrayList<? extends Parcelable>) tracks);
+		intent.putExtra(EXTRA_PLAY_INDEX, index);
 		return intent;
 	}
 
@@ -153,9 +167,8 @@ public class HomeFragment extends Fragment implements GenreAdapter.GenreClickLis
 		if (getArguments() != null) {
 			mGenres = getArguments().getParcelableArrayList(EXTRA_GENRES);
 			mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-			GenreAdapter genreAdapter = new GenreAdapter(mGenres);
+			GenreAdapter genreAdapter = new GenreAdapter((ArrayList<Genre>) mGenres, this);
 			mRecyclerView.setAdapter(genreAdapter);
-			getArguments().remove(EXTRA_GENRES);
 		}
 	}
 
@@ -186,7 +199,7 @@ public class HomeFragment extends Fragment implements GenreAdapter.GenreClickLis
 	private class RemindTask extends TimerTask {
 		@Override
 		public void run() {
-			getActivity().runOnUiThread(new Runnable() {
+			mActivity.runOnUiThread(new Runnable() {
 				public void run() {
 					if (mViewPager.getCurrentItem() == mViewPager.getChildCount()) {
 						mViewPager.setCurrentItem(FIRST_PAGE);

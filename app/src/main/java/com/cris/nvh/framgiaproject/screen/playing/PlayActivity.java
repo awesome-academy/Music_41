@@ -9,7 +9,7 @@ import com.cris.nvh.framgiaproject.R;
 import com.cris.nvh.framgiaproject.adapter.ViewPagerAdapter;
 import com.cris.nvh.framgiaproject.data.model.Track;
 
-import static com.cris.nvh.framgiaproject.screen.mymusic.MyMusicFragment.EXTRA_TRACK;
+import java.util.ArrayList;
 
 /**
  * Created by nvh
@@ -17,20 +17,28 @@ import static com.cris.nvh.framgiaproject.screen.mymusic.MyMusicFragment.EXTRA_T
  */
 
 public class PlayActivity extends AppCompatActivity {
+	public static final String EXTRA_PLAY_TRACKS =
+			"com.cris.nvh.framgiaproject.screen.playing.EXTRA_TRACKS";
+	public static final String EXTRA_PLAY_INDEX =
+			"com.cris.nvh.framgiaproject.screen.playing.EXTRA_INDEX";
 	private ViewPager mViewPager;
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_play);
-		Track track = getIntent().getExtras().getParcelable(EXTRA_TRACK);
+		ArrayList<Track> tracks = getIntent().getExtras().getParcelableArrayList(EXTRA_PLAY_TRACKS);
+		int trackIndex = getIntent().getIntExtra(EXTRA_PLAY_INDEX, 0);
+		getIntent().removeExtra(EXTRA_PLAY_INDEX);
+		getIntent().removeExtra(EXTRA_PLAY_TRACKS);
 		mViewPager = findViewById(R.id.view_pager);
-		initFragments(track);
+		initFragments(tracks, trackIndex);
 	}
 
-	private void initFragments(Track track) {
+	private void initFragments(ArrayList<Track> tracks, int index) {
 		Bundle bundle = new Bundle();
-		bundle.putParcelable(EXTRA_TRACK, track);
+		bundle.putParcelableArrayList(EXTRA_PLAY_TRACKS, tracks);
+		bundle.putInt(EXTRA_PLAY_INDEX, index);
 		PlayFragment playFragment = PlayFragment.newInstance();
 		playFragment.setArguments(bundle);
 		ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());

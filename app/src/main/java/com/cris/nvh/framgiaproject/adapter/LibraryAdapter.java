@@ -33,7 +33,7 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.LibraryV
 	public LibraryViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
 		View view = LayoutInflater
 				.from(viewGroup.getContext())
-				.inflate(R.layout.library_viewholder, viewGroup, false);
+				.inflate(R.layout.layout_library, viewGroup, false);
 		return new LibraryViewHolder(view);
 	}
 

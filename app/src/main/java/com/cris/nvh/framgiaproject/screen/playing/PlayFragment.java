@@ -15,13 +15,17 @@ import com.bumptech.glide.request.RequestOptions;
 import com.cris.nvh.framgiaproject.R;
 import com.cris.nvh.framgiaproject.data.model.Track;
 
-import static com.cris.nvh.framgiaproject.screen.mymusic.MyMusicFragment.EXTRA_TRACK;
+import java.util.ArrayList;
+
+import static com.cris.nvh.framgiaproject.screen.playing.PlayActivity.EXTRA_PLAY_INDEX;
+import static com.cris.nvh.framgiaproject.screen.playing.PlayActivity.EXTRA_PLAY_TRACKS;
 
 public class PlayFragment extends Fragment {
 	private static final int START_ANGLE = 0;
 	private static final int END_ANGLE = 360;
 	private static final int DURATION = 10000;
 	private static final float PIVOT = 0.5f;
+	private static final String NULL = "null";
 	private ImageView mImageAlbum;
 	private ImageView mImageBackButton;
 
@@ -39,10 +43,19 @@ public class PlayFragment extends Fragment {
 	}
 
 	private void initView(View view) {
-		Track track = getArguments().getParcelable(EXTRA_TRACK);
 		mImageAlbum = view.findViewById(R.id.image_album);
+		ArrayList<Track> tracks = getArguments().getParcelableArrayList(EXTRA_PLAY_TRACKS);
+		int trackIndex = getArguments().getInt(EXTRA_PLAY_INDEX);
+		setImageAlbum(view, tracks.get(trackIndex));
+		setImageAnimation();
+		getArguments().remove(EXTRA_PLAY_INDEX);
+		getArguments().remove(EXTRA_PLAY_TRACKS);
+	}
+
+	private void setImageAlbum(View view, Track track) {
 		Object uri;
-		if (track.getArtworkUrl() != null) {
+		if (track.getArtworkUrl() != null &&
+				!track.getArtworkUrl().equals(NULL)) {
 			uri = track.getArtworkUrl();
 		} else {
 			uri = R.drawable.default_album;
@@ -52,6 +65,9 @@ public class PlayFragment extends Fragment {
 				.apply(RequestOptions
 						.circleCropTransform())
 				.into(mImageAlbum);
+	}
+
+	private void setImageAnimation() {
 		RotateAnimation rotate = new RotateAnimation(START_ANGLE, END_ANGLE,
 				Animation.RELATIVE_TO_SELF, PIVOT, Animation.RELATIVE_TO_SELF, PIVOT);
 		rotate.setDuration(DURATION);
