@@ -1,10 +1,5 @@
 package com.cris.nvh.framgiaproject.adapter;
 
-/**
- * Created by nvh
- * Contact: toiyeuthethao1997@gmail.com
- */
-
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -68,8 +63,6 @@ public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.MyViewHold
 		private TextView mTrackName;
 		private TextView mSingerName;
 		private ImageView mFeature;
-		private ImageView mAddNowPlaying;
-		private ImageView mDeleteFavorite;
 		private OnClickItemTrackListener mListener;
 
 		public MyViewHolder(@NonNull View itemView) {
@@ -78,22 +71,9 @@ public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.MyViewHold
 			mTrackName = itemView.findViewById(R.id.text_song_name);
 			mSingerName = itemView.findViewById(R.id.text_singer_name);
 			mFeature = itemView.findViewById(R.id.image_feature);
-			mAddNowPlaying = itemView.findViewById(R.id.image_add_now_play);
-			mDeleteFavorite = itemView.findViewById(R.id.image_delete_favorite);
-			if (mIsNowPlaying) updateItem();
-			if (mIsRecentTracks || mIsNowPlaying) {
-				mAddNowPlaying.setVisibility(View.GONE);
-				mFeature.setVisibility(View.GONE);
-			}
-			if (mIsFavorite) {
-				mAddNowPlaying.setVisibility(View.GONE);
-				mFeature.setVisibility(View.GONE);
-				mDeleteFavorite.setVisibility(View.VISIBLE);
-			}
 		}
 
 		private void updateItem() {
-			mAddNowPlaying.setVisibility(View.GONE);
 			itemView.setBackgroundColor(itemView.getResources()
 					.getColor(R.color.color_black));
 		}
@@ -106,7 +86,6 @@ public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.MyViewHold
 			mListener = listener;
 			itemView.setOnClickListener(this);
 			mFeature.setOnClickListener(this);
-			mDeleteFavorite.setOnClickListener(this);
 		}
 
 		@Override
@@ -114,9 +93,6 @@ public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.MyViewHold
 			switch (view.getId()) {
 				case R.id.image_feature:
 					mListener.showDialogFeatureTrack(getAdapterPosition());
-					break;
-				case R.id.image_delete_favorite:
-					mDeleteListener.deleteFromFavorite(getAdapterPosition());
 					break;
 				default:
 					mListener.clickItemTrackListener(getAdapterPosition());
@@ -126,7 +102,7 @@ public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.MyViewHold
 
 		public void setImage(ImageView image, String source) {
 			RequestOptions requestOptions = new RequestOptions();
-			requestOptions.error(R.drawable.default_artwork);
+			requestOptions.error(R.drawable.default_album);
 			Glide.with(image.getContext())
 					.load(source)
 					.apply(requestOptions)

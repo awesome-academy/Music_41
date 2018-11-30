@@ -58,19 +58,7 @@ public class HomeFragment extends Fragment implements GenreAdapter.GenreClickLis
 	private View mViewMiniMediaPlayer;
 	private MiniMediaPlayer mMiniMediaPlayer;
 	private ArrayList<Genre> mGenres;
-	private ServiceConnection mConnection = new ServiceConnection() {
-		@Override
-		public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-			PlayMusicService.LocalBinder binder = (PlayMusicService.LocalBinder) iBinder;
-			mService = binder.getService();
-			mMiniMediaPlayer.setService(mService);
-		}
-
-		@Override
-		public void onServiceDisconnected(ComponentName componentName) {
-			getActivity().unbindService(mConnection);
-		}
-	};
+	private ServiceConnection mConnection;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater,
@@ -79,14 +67,19 @@ public class HomeFragment extends Fragment implements GenreAdapter.GenreClickLis
 				.from(container.getContext())
 				.inflate(R.layout.fragment_home, container, false);
 		initView(view);
-		getActivity().bindService(getMyServiceIntent(getActivity()),
-				mConnection, Context.BIND_AUTO_CREATE);
+		bindToService();
 		return view;
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		getActivity().unbindService(mConnection);
 	}
 
 	@Override
@@ -170,6 +163,24 @@ public class HomeFragment extends Fragment implements GenreAdapter.GenreClickLis
 		Timer timer;
 		timer = new Timer();
 		timer.scheduleAtFixedRate(new RemindTask(), 0, time);
+	}
+
+	private void bindToService() {
+		mConnection = new ServiceConnection() {
+			@Override
+			public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+				PlayMusicService.LocalBinder binder = (PlayMusicService.LocalBinder) iBinder;
+				mService = binder.getService();
+				mMiniMediaPlayer.setService(mService);
+			}
+
+			@Override
+			public void onServiceDisconnected(ComponentName componentName) {
+				getActivity().unbindService(mConnection);
+			}
+		};
+		getActivity().bindService(getMyServiceIntent(getActivity()),
+				mConnection, Context.BIND_AUTO_CREATE);
 	}
 
 	private class RemindTask extends TimerTask {

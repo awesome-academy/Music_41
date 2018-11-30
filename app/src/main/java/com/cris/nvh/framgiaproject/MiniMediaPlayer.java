@@ -45,7 +45,6 @@ public class MiniMediaPlayer implements View.OnClickListener {
 			default:
 				break;
 		}
-
 	}
 
 	public TextView getTrackName() {

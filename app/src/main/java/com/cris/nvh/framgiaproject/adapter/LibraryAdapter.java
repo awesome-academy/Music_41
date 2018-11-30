@@ -21,8 +21,10 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.LibraryV
 	private static int[] sTitles = {R.string.text_song,
 			R.string.donwload, R.string.favorite};
 	private static int[] sTotalTracks;
+	private OnClickItemListener mListener;
 
-	public LibraryAdapter(int[] totalTracks) {
+	public LibraryAdapter(int[] totalTracks, OnClickItemListener listener) {
+		mListener = listener;
 		sTotalTracks = totalTracks;
 	}
 
@@ -37,7 +39,7 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.LibraryV
 
 	@Override
 	public void onBindViewHolder(@NonNull LibraryViewHolder libraryViewHolder, int i) {
-		libraryViewHolder.bindData(i);
+		libraryViewHolder.bindData(i, mListener);
 	}
 
 	@Override
@@ -45,22 +47,35 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.LibraryV
 		return sImageResIds == null ? 0 : sImageResIds.length;
 	}
 
-	public static class LibraryViewHolder extends RecyclerView.ViewHolder {
+	public static class LibraryViewHolder extends RecyclerView.ViewHolder implements
+			View.OnClickListener {
 		private ImageView mImageView;
 		private TextView mTittle;
 		private TextView mTextTotalSongs;
+		private OnClickItemListener mListener;
 
 		public LibraryViewHolder(@NonNull View itemView) {
 			super(itemView);
 			mImageView = itemView.findViewById(R.id.image_item);
 			mTittle = itemView.findViewById(R.id.text_title);
 			mTextTotalSongs = itemView.findViewById(R.id.text_total_songs);
+			itemView.setOnClickListener(this);
 		}
 
-		public void bindData(int i) {
+		public void bindData(int i, OnClickItemListener listener) {
 			mImageView.setImageResource(sImageResIds[i]);
 			mTittle.setText(sTitles[i]);
 			mTextTotalSongs.setText(String.valueOf(sTotalTracks[i]));
+			mListener = listener;
 		}
+
+		@Override
+		public void onClick(View view) {
+			mListener.clickItem(getAdapterPosition());
+		}
+	}
+
+	public interface OnClickItemListener {
+		void clickItem(int position);
 	}
 }

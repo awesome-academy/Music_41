@@ -14,13 +14,19 @@ import com.cris.nvh.framgiaproject.mediaplayer.MediaPlayerManager;
 public class PlayMusicService extends Service implements IService,
 		MediaPlayerManager.OnLoadingTrackListener {
 
-	private static final int REQUEST_CREATE = 1;
-	private static final int REQUEST_CHANGE_SONG = 2;
+	public static final String EXTRA_REQUEST_CODE =
+			"com.cris.nvh.framgiaproject.service.EXTRA.REQUEST_CODE";
+	private static final int REQUEST_CREATE = 0;
+	private static final int REQUEST_NEXT = 1;
+	private static final int REQUEST_PREVIOUS = 2;
 	private static final int REQUEST_START = 3;
 	private static final int REQUEST_PAUSE = 4;
 	private static final int REQUEST_SEEK = 5;
 	private static final int REQUEST_PREPARE = 6;
 	private static final String WORKER_THREAD_NAME = "ServiceThread";
+	private static final int VALUE_NEXT_SONG = 4;
+	private static final int VALUE_PREVIOUS_SONG = 5;
+	private static final int VALUE_PLAY_SONG = 6;
 	private static Handler mUIHandler;
 	private final IBinder mBinder = new LocalBinder();
 	private Looper mServiceLooper;
@@ -44,6 +50,19 @@ public class PlayMusicService extends Service implements IService,
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		if (intent != null) {
+			int request = intent.getIntExtra(EXTRA_REQUEST_CODE, 0);
+			switch (request) {
+				case VALUE_NEXT_SONG:
+					break;
+				case VALUE_PREVIOUS_SONG:
+					break;
+				case VALUE_PLAY_SONG:
+					break;
+				default:
+					break;
+			}
+		}
 		return START_STICKY;
 	}
 
@@ -103,8 +122,13 @@ public class PlayMusicService extends Service implements IService,
 	}
 
 	@Override
-	public void changeTrack() {
-		mMediaPlayerManager.changeTrack();
+	public void next() {
+		mMediaPlayerManager.next();
+	}
+
+	@Override
+	public void previous() {
+		mMediaPlayerManager.previous();
 	}
 
 	public static void setUIHandler(Handler uiHandler) {
@@ -132,16 +156,15 @@ public class PlayMusicService extends Service implements IService,
 	}
 
 	public void createTrack(int index) {
-		Message message = new Message();
-		message.what = REQUEST_CREATE;
-		message.arg1 = index;
-		mServiceHandler.sendMessage(message);
+		sendMessage(REQUEST_CREATE, index);
 	}
 
-	public void nextTrack(int index){
+	public void nextTrack(int index) {
+		sendMessage(REQUEST_NEXT, index);
 	}
 
-	public void previousTrack(int index){
+	public void previousTrack(int index) {
+		sendMessage(REQUEST_PREVIOUS, index);
 	}
 
 	public void startTrack() {
@@ -153,14 +176,18 @@ public class PlayMusicService extends Service implements IService,
 	}
 
 	public void seekTrack(int position) {
-		Message message = new Message();
-		message.arg1 = position;
-		message.what = REQUEST_SEEK;
-		mServiceHandler.sendMessage(message);
+		sendMessage(REQUEST_SEEK, position);
 	}
 
 	public void requestPrepareAsync() {
 		mServiceHandler.sendEmptyMessage(REQUEST_PREPARE);
+	}
+
+	public void sendMessage(int request, int index) {
+		Message message = new Message();
+		message.what = request;
+		message.arg1 = index;
+		mServiceHandler.sendMessage(message);
 	}
 
 	public class LocalBinder extends Binder {
@@ -176,6 +203,31 @@ public class PlayMusicService extends Service implements IService,
 
 		@Override
 		public void handleMessage(Message msg) {
+			switch (msg.what) {
+				case REQUEST_CREATE:
+					create(msg.arg1);
+					break;
+				case REQUEST_NEXT:
+					next();
+					break;
+				case REQUEST_PREVIOUS:
+					previous();
+					break;
+				case REQUEST_START:
+					start();
+					break;
+				case REQUEST_PAUSE:
+					pause();
+					break;
+				case REQUEST_SEEK:
+					seek(msg.arg1);
+					break;
+				case REQUEST_PREPARE:
+					prepare();
+					break;
+				default:
+					break;
+			}
 		}
 	}
 }

@@ -18,7 +18,6 @@ public class MediaPlayerManager extends MediaPlayerSetting implements PlayMusic,
 	private MediaPlayer mMediaPlayer;
 	private List<Track> mTracks;
 	private int mCurrentIndex;
-	private int mStatus;
 	private OnLoadingTrackListener mListener;
 
 	private MediaPlayerManager(Context context) {
@@ -82,7 +81,11 @@ public class MediaPlayerManager extends MediaPlayerSetting implements PlayMusic,
 	}
 
 	@Override
-	public void changeTrack() {
+	public void next() {
+	}
+
+	@Override
+	public void previous() {
 	}
 
 	@Override
@@ -92,6 +95,14 @@ public class MediaPlayerManager extends MediaPlayerSetting implements PlayMusic,
 	@Override
 	public void onPrepared(MediaPlayer mediaPlayer) {
 		start();
+	}
+
+	public List<Track> getTracks() {
+		return mTracks;
+	}
+
+	public void setTracks(List<Track> tracks) {
+		mTracks = tracks;
 	}
 
 	private void initOnline() {

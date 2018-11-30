@@ -23,5 +23,7 @@ public interface IService {
 
 	int getTrack();
 
-	void changeTrack();
+	void next();
+
+	void previous();
 }

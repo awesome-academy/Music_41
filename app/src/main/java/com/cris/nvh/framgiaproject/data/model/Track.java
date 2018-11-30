@@ -43,7 +43,7 @@ public class Track implements Parcelable {
 
 	protected Track(Parcel in) {
 		mArtworkUrl = in.readString();
-		mDownloadable = ((boolean) in.readValue((boolean.class.getClassLoader())));
+		mDownloadable = in.readByte() != 0;
 		mDownloadUrl = in.readString();
 		mDuration = in.readInt();
 		mId = in.readInt();
@@ -55,7 +55,7 @@ public class Track implements Parcelable {
 
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeString(mArtworkUrl);
-		dest.writeValue(mDownloadable);
+		dest.writeByte((byte) (mDownloadable ? 1 : 0));
 		dest.writeString(mDownloadUrl);
 		dest.writeInt(mDuration);
 		dest.writeInt(mId);

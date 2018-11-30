@@ -5,11 +5,6 @@ import android.support.annotation.IntDef;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-/**
- * Created by nvh
- * Contact: toiyeuthethao1997@gmail.com
- */
-
 public interface PlayMusic {
 	void create(int index);
 
@@ -33,5 +28,22 @@ public interface PlayMusic {
 
 	int getTrack();
 
-	void changeTrack();
+	void next();
+
+	void previous();
+
+	@Retention(RetentionPolicy.SOURCE)
+	@IntDef({StatusPlayerType.IDLE, StatusPlayerType.INITIALIZED, StatusPlayerType.PREPARING,
+			StatusPlayerType.STARTED, StatusPlayerType.PAUSED, StatusPlayerType.STOPPED,
+			StatusPlayerType.END, StatusPlayerType.PLAYBACK_COMPLETED})
+	@interface StatusPlayerType {
+		int IDLE = 0;
+		int INITIALIZED = 1;
+		int PREPARING = 2;
+		int STARTED = 3;
+		int PAUSED = 4;
+		int STOPPED = 5;
+		int END = 6;
+		int PLAYBACK_COMPLETED = 7;
+	}
 }

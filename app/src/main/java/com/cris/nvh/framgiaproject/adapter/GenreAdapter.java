@@ -40,7 +40,7 @@ public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.GenreViewHol
 	public GenreViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
 		View view = LayoutInflater
 				.from(viewGroup.getContext())
-				.inflate(R.layout.genre_viewholder, viewGroup, false);
+				.inflate(R.layout.layout_genre, viewGroup, false);
 		return new GenreViewHolder(view);
 	}
 
@@ -61,7 +61,7 @@ public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.GenreViewHol
 		public GenreViewHolder(View itemView) {
 			super(itemView);
 			mTextView = itemView.findViewById(R.id.text_genre);
-			mRecyclerView = itemView.findViewById(R.id.recycler_list_tracks);
+			mRecyclerView = itemView.findViewById(R.id.recycler_tracks);
 		}
 
 		public void bindData(Genre genre) {
