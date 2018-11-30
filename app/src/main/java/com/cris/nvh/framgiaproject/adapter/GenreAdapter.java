@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.cris.nvh.framgiaproject.R;
 import com.cris.nvh.framgiaproject.data.model.Genre;
 import com.cris.nvh.framgiaproject.data.model.Track;
@@ -24,15 +25,20 @@ import static android.support.v7.widget.LinearLayoutManager.HORIZONTAL;
  */
 
 public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.GenreViewHolder> {
+	private static final String ARTWORK_DEFAULT_SIZE = "large";
+	private static final String ARTWORK_MAX_SIZE = "t500x500";
 	private static final int ALL_MUSIC_INDEX = 0;
 	private static final int ALL_AUDIO_INDEX = 1;
 	private static final int ALL_ALTERNATIVE_INDEX = 2;
 	private static final int ALL_AMBIENT_INDEX = 3;
 	private static final int ALL_CLASSICAL_INDEX = 4;
 	private static final int ALL_COUNTRY_INDEX = 5;
-	private ArrayList<Genre> mGenres;
+	private static final String NULL = "null";
+	private GenreClickListener mListener;
+	private List<Genre> mGenres;
 
-	public GenreAdapter(ArrayList<Genre> genres) {
+	public GenreAdapter(List<Genre> genres, GenreClickListener listener) {
+		mListener = listener;
 		mGenres = genres;
 	}
 
@@ -46,7 +52,7 @@ public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.GenreViewHol
 
 	@Override
 	public void onBindViewHolder(GenreViewHolder genreViewHolder, int i) {
-		genreViewHolder.bindData(mGenres.get(i));
+		genreViewHolder.bindData(mGenres.get(i), mListener);
 	}
 
 	@Override
@@ -54,9 +60,15 @@ public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.GenreViewHol
 		return mGenres == null ? 0 : mGenres.size();
 	}
 
-	public static class GenreViewHolder extends RecyclerView.ViewHolder {
+	public static class GenreViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 		private TextView mTextView;
 		private RecyclerView mRecyclerView;
+		private GenreClickListener mListener;
+
+		@Override
+		public void onClick(View view) {
+			mListener.onItemClick(getAdapterPosition());
+		}
 
 		public GenreViewHolder(View itemView) {
 			super(itemView);
@@ -64,12 +76,15 @@ public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.GenreViewHol
 			mRecyclerView = itemView.findViewById(R.id.recycler_tracks);
 		}
 
-		public void bindData(Genre genre) {
+		public void bindData(Genre genre, GenreClickListener listener) {
 			setGenreText();
-			mRecyclerView.setAdapter(new ListTracksAdapter(genre.getTracks()));
+			mRecyclerView.setAdapter(new ListTracksAdapter(genre.getTracks(),
+					listener, getAdapterPosition()));
 			mRecyclerView.setHasFixedSize(true);
 			mRecyclerView.setLayoutManager(new LinearLayoutManager(
 					itemView.getContext(), HORIZONTAL, false));
+			mListener = listener;
+			itemView.setOnClickListener(this);
 		}
 
 		public void setGenreText() {
@@ -95,24 +110,28 @@ public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.GenreViewHol
 			}
 		}
 
-		public class ListTracksAdapter extends RecyclerView.Adapter<ListTracksAdapter.TrackViewHolder> {
+		public static class ListTracksAdapter extends RecyclerView.Adapter<ListTracksAdapter.TrackViewHolder> {
 			private List<Track> mTracks;
+			private GenreClickListener mListener;
+			private int mGenreIndex;
 
-			public ListTracksAdapter(List<Track> tracks) {
+			public ListTracksAdapter(List<Track> tracks, GenreClickListener listener, int index) {
+				mListener = listener;
 				mTracks = tracks;
+				mGenreIndex = index;
 			}
 
 			@Override
 			public TrackViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
 				View view = LayoutInflater
 						.from(viewGroup.getContext())
-						.inflate(R.layout.tracks_viewholder, viewGroup, false);
+						.inflate(R.layout.layout_tracks, viewGroup, false);
 				return new TrackViewHolder(view);
 			}
 
 			@Override
 			public void onBindViewHolder(TrackViewHolder trackViewHolder, int i) {
-				trackViewHolder.bindData(i);
+				trackViewHolder.bindData(mTracks.get(i), mListener, mGenreIndex);
 			}
 
 			@Override
@@ -120,24 +139,37 @@ public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.GenreViewHol
 				return mTracks == null ? 0 : mTracks.size();
 			}
 
-			class TrackViewHolder extends RecyclerView.ViewHolder {
+			public static class TrackViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 				private ImageView mImageView;
+				private GenreClickListener mListener;
+				private int mGenreIndex;
+
+				@Override
+				public void onClick(View view) {
+					mListener.onTrackClick(mGenreIndex, getAdapterPosition());
+				}
 
 				public TrackViewHolder(View itemView) {
 					super(itemView);
 					mImageView = itemView.findViewById(R.id.image_track);
 				}
 
-				public void bindData(int i) {
-					String imageUrl = mTracks.get(i).getArtworkUrl();
-					if (!imageUrl.equals("null")) {
+				public void bindData(Track track, GenreClickListener listener, int genreIndex) {
+					mListener = listener;
+					mGenreIndex = genreIndex;
+					itemView.setOnClickListener(this);
+					track.setArtworkUrl(track.getArtworkUrl()
+							.replace(ARTWORK_DEFAULT_SIZE, ARTWORK_MAX_SIZE));
+					String imageUrl = track.getArtworkUrl();
+					if (!imageUrl.equals(NULL)) {
 						Glide.with(itemView)
 								.load(imageUrl)
 								.into(mImageView);
 						return;
 					}
 					Glide.with(itemView)
-							.load(R.drawable.default_image)
+							.load(R.drawable.default_artwork)
+							.apply(new RequestOptions().centerCrop())
 							.into(mImageView);
 				}
 			}
@@ -145,6 +177,8 @@ public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.GenreViewHol
 	}
 
 	public interface GenreClickListener {
-		void onItemClick(Genre genre);
+		void onItemClick(int position);
+
+		void onTrackClick(int genreIndex, int trackIndex);
 	}
 }

@@ -9,6 +9,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.ImageView;
 
 import com.cris.nvh.framgiaproject.R;
 import com.cris.nvh.framgiaproject.adapter.TracksAdapter;
@@ -20,11 +22,13 @@ import java.util.ArrayList;
 import static com.cris.nvh.framgiaproject.MainActivity.getMyServiceIntent;
 import static com.cris.nvh.framgiaproject.screen.splash.SplashActivity.EXTRA_TRACKS;
 
-public class ListTracksActivity extends AppCompatActivity implements TracksAdapter.OnClickItemTrackListener {
+public class ListTracksActivity extends AppCompatActivity implements View.OnClickListener, TracksAdapter.OnClickItemTrackListener {
 	private RecyclerView mRecyclerView;
 	private PlayMusicService mService;
 	private ArrayList<Track> mTracks;
 	private ServiceConnection mConnection;
+	private ImageView mButtonBack;
+	private ImageView mButtonSearch;
 
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,6 +53,19 @@ public class ListTracksActivity extends AppCompatActivity implements TracksAdapt
 
 	}
 
+	@Override
+	public void onClick(View view) {
+		switch (view.getId()) {
+			case R.id.image_view:
+				super.onBackPressed();
+				break;
+			case R.id.image_search:
+				break;
+			default:
+				break;
+		}
+	}
+
 	private void bindToService() {
 		mConnection = new ServiceConnection() {
 			@Override
@@ -68,9 +85,14 @@ public class ListTracksActivity extends AppCompatActivity implements TracksAdapt
 
 	private void initView() {
 		mRecyclerView = findViewById(R.id.recycler_tracks);
+		mButtonSearch = findViewById(R.id.image_search);
+		mButtonBack = findViewById(R.id.image_view);
+		mButtonBack.setImageResource(R.drawable.ic_back);
 		mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 		mTracks = getIntent().getParcelableArrayListExtra(EXTRA_TRACKS);
 		TracksAdapter tracksAdapter = new TracksAdapter(mTracks, this);
 		mRecyclerView.setAdapter(tracksAdapter);
+		mButtonBack.setOnClickListener(this);
+		mButtonSearch.setOnClickListener(this);
 	}
 }
