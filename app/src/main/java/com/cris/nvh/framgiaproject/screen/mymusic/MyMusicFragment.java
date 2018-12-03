@@ -29,13 +29,16 @@ import com.cris.nvh.framgiaproject.screen.playing.PlayActivity;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.cris.nvh.framgiaproject.screen.listtracks.ListTracksActivity.EXTRA_TITLE;
+import static com.cris.nvh.framgiaproject.screen.listtracks.ListTracksActivity.EXTRA_TRACK;
+import static com.cris.nvh.framgiaproject.screen.listtracks.TrackTypes.LOCAL;
 import static com.cris.nvh.framgiaproject.screen.playing.PlayActivity.EXTRA_PLAY_INDEX;
 import static com.cris.nvh.framgiaproject.screen.playing.PlayActivity.EXTRA_PLAY_TRACKS;
 import static com.cris.nvh.framgiaproject.screen.splash.SplashActivity.EXTRA_TRACKS;
 
 
 public class MyMusicFragment extends Fragment implements View.OnClickListener,
-		LibraryAdapter.OnClickItemListener, TracksAdapter.OnClickItemTrackListener {
+	LibraryAdapter.OnClickItemListener, TracksAdapter.OnClickItemTrackListener {
 	private static final int DEFAULT_TOTAL_SONGS = 0;
 	private static final String TAG = "DIALOG";
 	private static String[] sOptions = {"Delete", "Add to favorite"};
@@ -49,8 +52,8 @@ public class MyMusicFragment extends Fragment implements View.OnClickListener,
 	public View onCreateView(LayoutInflater inflater,
 	                         ViewGroup container, Bundle savedInstanceState) {
 		View view = LayoutInflater
-				.from(container.getContext())
-				.inflate(R.layout.fragment_my_music, container, false);
+			.from(container.getContext())
+			.inflate(R.layout.fragment_my_music, container, false);
 		initView(view);
 		return view;
 	}
@@ -68,7 +71,7 @@ public class MyMusicFragment extends Fragment implements View.OnClickListener,
 
 	@Override
 	public void clickItem(int position) {
-		startActivity(getListTracksActivityIntent(getActivity(), getLocalTracks()));
+		startActivity(getListTracksActivityIntent(getActivity(), getLocalTracks(), LOCAL));
 	}
 
 	@Override
@@ -76,7 +79,7 @@ public class MyMusicFragment extends Fragment implements View.OnClickListener,
 		switch (view.getId()) {
 			case R.id.image_search:
 				startActivity(HomeFragment
-						.getSearchActivityIntent(getActivity(), mEditSearch.getText().toString()));
+					.getSearchActivityIntent(getActivity(), mEditSearch.getText().toString()));
 				break;
 			default:
 				break;
@@ -87,14 +90,15 @@ public class MyMusicFragment extends Fragment implements View.OnClickListener,
 		Intent intent = new Intent(context, PlayActivity.class);
 		intent.putExtra(EXTRA_PLAY_INDEX, index);
 		intent.putParcelableArrayListExtra(EXTRA_PLAY_TRACKS,
-				(ArrayList<? extends Parcelable>) tracks);
+			(ArrayList<? extends Parcelable>) tracks);
 		return intent;
 	}
 
-	public static Intent getListTracksActivityIntent(Context context, List<Track> tracks) {
+	public static Intent getListTracksActivityIntent(Context context, List<Track> tracks, int index) {
 		Intent intent = new Intent(context, ListTracksActivity.class);
-		intent.putParcelableArrayListExtra(EXTRA_TRACKS,
-				(ArrayList<? extends Parcelable>) tracks);
+		intent.putParcelableArrayListExtra(EXTRA_TRACK,
+			(ArrayList<? extends Parcelable>) tracks);
+		intent.putExtra(EXTRA_TITLE, index);
 		return intent;
 	}
 
@@ -112,7 +116,7 @@ public class MyMusicFragment extends Fragment implements View.OnClickListener,
 		mRecyclerViewLibrary.setLayoutManager(new LinearLayoutManager(getContext()));
 		mRecyclerViewRecent.setLayoutManager(new LinearLayoutManager(getContext()));
 		mRecyclerViewLibrary.setAdapter(new LibraryAdapter(new int[]{tracks.size(),
-				DEFAULT_TOTAL_SONGS, DEFAULT_TOTAL_SONGS}, this));
+			DEFAULT_TOTAL_SONGS, DEFAULT_TOTAL_SONGS}, this));
 		mRecyclerViewRecent.setAdapter(new TracksAdapter(tracks, this));
 		mButtonSearch.setOnClickListener(this);
 	}
@@ -130,12 +134,12 @@ public class MyMusicFragment extends Fragment implements View.OnClickListener,
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			return new AlertDialog.Builder(getActivity())
-					.setItems(sOptions, new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialogInterface, int i) {
-						}
-					})
-					.create();
+				.setItems(sOptions, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialogInterface, int i) {
+					}
+				})
+				.create();
 		}
 	}
 }

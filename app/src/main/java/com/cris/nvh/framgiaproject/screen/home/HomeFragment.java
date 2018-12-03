@@ -22,10 +22,11 @@ import android.widget.ImageView;
 import com.cris.nvh.framgiaproject.MiniMediaPlayer;
 import com.cris.nvh.framgiaproject.R;
 import com.cris.nvh.framgiaproject.adapter.GenreAdapter;
+import com.cris.nvh.framgiaproject.adapter.TracksAdapter;
 import com.cris.nvh.framgiaproject.adapter.TracksSlideAdapter;
 import com.cris.nvh.framgiaproject.data.model.Genre;
 import com.cris.nvh.framgiaproject.data.model.Track;
-import com.cris.nvh.framgiaproject.screen.genres.GenresActivity;
+import com.cris.nvh.framgiaproject.screen.listtracks.ListTracksActivity;
 import com.cris.nvh.framgiaproject.screen.playing.PlayActivity;
 import com.cris.nvh.framgiaproject.screen.search.SearchActivity;
 import com.cris.nvh.framgiaproject.service.PlayMusicService;
@@ -36,6 +37,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import static com.cris.nvh.framgiaproject.MainActivity.getMyServiceIntent;
+import static com.cris.nvh.framgiaproject.screen.listtracks.ListTracksActivity.EXTRA_TITLE;
+import static com.cris.nvh.framgiaproject.screen.listtracks.ListTracksActivity.EXTRA_TRACK;
 import static com.cris.nvh.framgiaproject.screen.playing.PlayActivity.EXTRA_PLAY_INDEX;
 import static com.cris.nvh.framgiaproject.screen.playing.PlayActivity.EXTRA_PLAY_TRACKS;
 import static com.cris.nvh.framgiaproject.screen.splash.SplashActivity.EXTRA_GENRES;
@@ -45,28 +48,26 @@ import static com.cris.nvh.framgiaproject.screen.splash.SplashActivity.EXTRA_GEN
  * Contact: toiyeuthethao1997@gmail.com
  */
 
-public class HomeFragment extends Fragment implements GenreAdapter.GenreClickListener, View.OnClickListener {
+public class HomeFragment extends Fragment implements
+	GenreAdapter.GenreClickListener, View.OnClickListener,
+	TracksAdapter.OnClickItemTrackListener {
 	public static final String EXTRA_SEARCH =
-			"com.cris.nvh.framgiaproject.screen.home.EXTRA_SEARCH";
-	public static final String EXTRA_HOME_TRACKS = "com.cris.nvh.framgiaproject.screen.home.EXTRA_TRACKS";
-	public static final String EXTRA_HOME_INDEX = "com.cris.nvh.framgiaproject.screen.home.EXTRA_INDEX";
-	private static final int ALL_MUSIC_INDEX = 0;
+		"com.cris.nvh.framgiaproject.screen.home.EXTRA_SEARCH";
 	private static final int DURATION = 8000;
-	private static final int SIZE_BOUND = 10;
 	private static final int FIRST_PAGE = 0;
 	private static final int PLUS = 1;
-
+	public static MiniMediaPlayer sMiniMediaPlayer;
 	private PlayMusicService mService;
 	private ViewPager mViewPager;
 	private TabLayout mTabLayout;
 	private RecyclerView mRecyclerView;
 	private ImageView mImageSearch;
 	private EditText mEditSearch;
-	private View mViewMiniMediaPlayer;
-	private MiniMediaPlayer mMiniMediaPlayer;
 	private List<Genre> mGenres;
 	private ServiceConnection mConnection;
 	private Activity mActivity;
+	private TracksAdapter mAdapter;
+	private View mViewMiniMediaPlayer;
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -78,8 +79,8 @@ public class HomeFragment extends Fragment implements GenreAdapter.GenreClickLis
 	public View onCreateView(LayoutInflater inflater,
 	                         ViewGroup container, Bundle savedInstanceState) {
 		View view = LayoutInflater
-				.from(container.getContext())
-				.inflate(R.layout.fragment_home, container, false);
+			.from(container.getContext())
+			.inflate(R.layout.fragment_home, container, false);
 		initView(view);
 		bindToService();
 		return view;
@@ -101,7 +102,7 @@ public class HomeFragment extends Fragment implements GenreAdapter.GenreClickLis
 		switch (view.getId()) {
 			case R.id.image_search:
 				startActivity(getSearchActivityIntent(getActivity(),
-						mEditSearch.getText().toString()));
+					mEditSearch.getText().toString()));
 			default:
 				break;
 		}
@@ -109,13 +110,25 @@ public class HomeFragment extends Fragment implements GenreAdapter.GenreClickLis
 
 	@Override
 	public void onItemClick(int index) {
-		startActivity(getGenresActivityIntent(getActivity(), mGenres.get(index)));
+		startActivity(getListTracksActivityIntent(getActivity(),
+			mGenres.get(index).getTracks(), index));
 	}
 
 	@Override
 	public void onTrackClick(int genreIndex, int trackIndex) {
 		startActivity(getPlayActivityIntent(getActivity(),
-				(List<Track>) mGenres.get(genreIndex).getTracks(), trackIndex));
+			(ArrayList<Track>) mGenres.get(genreIndex).getTracks(), trackIndex));
+		mAdapter.setRecentTracks(true);
+		mService.setTracks(mGenres.get(genreIndex).getTracks());
+		mService.createTrack(trackIndex);
+	}
+
+	@Override
+	public void clickItemTrackListener(int position) {
+	}
+
+	@Override
+	public void showDialogFeatureTrack(int position) {
 	}
 
 	public static HomeFragment newInstance() {
@@ -126,7 +139,7 @@ public class HomeFragment extends Fragment implements GenreAdapter.GenreClickLis
 	public static Intent getPlayActivityIntent(Context context, List<Track> tracks, int index) {
 		Intent intent = new Intent(context, PlayActivity.class);
 		intent.putParcelableArrayListExtra(EXTRA_PLAY_TRACKS,
-				(ArrayList<? extends Parcelable>) tracks);
+			(ArrayList<? extends Parcelable>) tracks);
 		intent.putExtra(EXTRA_PLAY_INDEX, index);
 		return intent;
 	}
@@ -137,9 +150,11 @@ public class HomeFragment extends Fragment implements GenreAdapter.GenreClickLis
 		return intent;
 	}
 
-	public static Intent getGenresActivityIntent(Context context, Genre genre) {
-		Intent intent = new Intent(context, GenresActivity.class);
-		intent.putExtra(EXTRA_GENRES, genre);
+	public static Intent getListTracksActivityIntent(Context context, List<Track> tracks, int index) {
+		Intent intent = new Intent(context, ListTracksActivity.class);
+		intent.putParcelableArrayListExtra(EXTRA_TRACK,
+			(ArrayList<? extends Parcelable>) tracks);
+		intent.putExtra(EXTRA_TITLE, index);
 		return intent;
 	}
 
@@ -150,7 +165,8 @@ public class HomeFragment extends Fragment implements GenreAdapter.GenreClickLis
 		mImageSearch = view.findViewById(R.id.image_search);
 		mEditSearch = view.findViewById(R.id.edit_search);
 		mViewMiniMediaPlayer = view.findViewById(R.id.mini_mediaplayer);
-		mMiniMediaPlayer = new MiniMediaPlayer(mViewMiniMediaPlayer);
+		sMiniMediaPlayer = new MiniMediaPlayer(mViewMiniMediaPlayer);
+		mAdapter = new TracksAdapter(this);
 		initImageSlide();
 		initGenreAdapter();
 		mImageSearch.setOnClickListener(this);
@@ -184,7 +200,7 @@ public class HomeFragment extends Fragment implements GenreAdapter.GenreClickLis
 			public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
 				PlayMusicService.LocalBinder binder = (PlayMusicService.LocalBinder) iBinder;
 				mService = binder.getService();
-				mMiniMediaPlayer.setService(mService);
+				sMiniMediaPlayer.setService(mService);
 			}
 
 			@Override
@@ -193,7 +209,7 @@ public class HomeFragment extends Fragment implements GenreAdapter.GenreClickLis
 			}
 		};
 		getActivity().bindService(getMyServiceIntent(getActivity()),
-				mConnection, Context.BIND_AUTO_CREATE);
+			mConnection, Context.BIND_AUTO_CREATE);
 	}
 
 	private class RemindTask extends TimerTask {

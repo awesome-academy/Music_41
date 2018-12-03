@@ -3,6 +3,7 @@ package com.cris.nvh.framgiaproject.data.source.remote;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import com.cris.nvh.framgiaproject.BuildConfig;
 import com.cris.nvh.framgiaproject.R;
 import com.cris.nvh.framgiaproject.data.model.Genre;
 import com.cris.nvh.framgiaproject.data.model.Track;
@@ -19,6 +20,10 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+
+import static com.cris.nvh.framgiaproject.Constants.BASE_URL_TRACK;
+import static com.cris.nvh.framgiaproject.Constants.NAME_STREAM;
+import static com.cris.nvh.framgiaproject.Constants.PARAMETER_ID;
 
 public class LoadTracksAsyncTask extends AsyncTask<String[], Integer, ArrayList<Genre>> {
 	private TracksDataSource.LoadDataCallBack<Genre> mCallback;
@@ -69,7 +74,7 @@ public class LoadTracksAsyncTask extends AsyncTask<String[], Integer, ArrayList<
 			connection.setReadTimeout(READ_TIMEOUT);
 			connection.connect();
 			InputStreamReader inputStream = new InputStreamReader(
-					connection.getInputStream());
+				connection.getInputStream());
 			BufferedReader bufferedReader = new BufferedReader(inputStream);
 			String line;
 			while ((line = bufferedReader.readLine()) != null) {
@@ -124,6 +129,7 @@ public class LoadTracksAsyncTask extends AsyncTask<String[], Integer, ArrayList<
 			track.setDuration(jsonTrack.getInt(DURATION));
 			track.setArtist(jsonTrack.getJSONObject(KEY_USER).getString(ARTIST_NAME));
 			track.setArtistImage(jsonTrack.getJSONObject(KEY_USER).getString(ARTIST_IMAGE));
+			track.setStreamUrl(BASE_URL_TRACK + track.getId() + NAME_STREAM + PARAMETER_ID + BuildConfig.API_KEY);
 			return track;
 		} catch (JSONException e) {
 			mCallback.onFail(mContext.getString(R.string.json_to_object_failed));
