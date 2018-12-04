@@ -11,27 +11,27 @@
         android:layout_height="@dimen/dp_45"
         android:layout_marginLeft="@dimen/dp_5"
         android:scaleType="fitXY"
-        android:src="@drawable/spotify"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/text_song_name"
-        android:layout_width="@dimen/dp_80"
+        android:layout_width="@dimen/dp_140"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/dp_10"
         android:layout_marginTop="@dimen/dp_5"
-        android:text="song name"
+        android:singleLine="true"
         android:textColor="@color/color_white"
         app:layout_constraintLeft_toRightOf="@id/image_track"
         app:layout_constraintTop_toTopOf="@id/image_track" />
 
     <TextView
-        android:id="@+id/text_singer"
-        android:layout_width="@dimen/dp_80"
+        android:id="@+id/text_singer_name"
+        android:layout_width="@dimen/dp_140"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/dp_10"
+        android:singleLine="true"
         android:textColor="@color/color_white"
         app:layout_constraintLeft_toRightOf="@id/image_track"
         app:layout_constraintTop_toBottomOf="@id/text_song_name" />
@@ -56,7 +56,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toLeftOf="@id/button_next"
         app:layout_constraintTop_toTopOf="parent" />
-
 
     <ImageView
         android:id="@+id/button_previous"

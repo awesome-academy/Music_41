@@ -28,12 +28,18 @@ import com.cris.nvh.framgiaproject.service.PlayMusicService;
 
 import java.util.ArrayList;
 
+import static com.cris.nvh.framgiaproject.mediaplayer.MediaRequest.FAILURE;
+import static com.cris.nvh.framgiaproject.mediaplayer.MediaRequest.LOADING;
+import static com.cris.nvh.framgiaproject.mediaplayer.MediaRequest.PAUSED;
+import static com.cris.nvh.framgiaproject.mediaplayer.MediaRequest.STOPPED;
+import static com.cris.nvh.framgiaproject.mediaplayer.MediaRequest.SUCCESS;
+import static com.cris.nvh.framgiaproject.mediaplayer.MediaRequest.UPDATE_MINI_PLAYER;
 import static com.cris.nvh.framgiaproject.screen.splash.SplashActivity.ACTION_LOAD_API;
 import static com.cris.nvh.framgiaproject.screen.splash.SplashActivity.EXTRA_GENRES;
 import static com.cris.nvh.framgiaproject.screen.splash.SplashActivity.EXTRA_TRACKS;
 
 public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener,
-		BottomNavigationView.OnNavigationItemSelectedListener {
+	BottomNavigationView.OnNavigationItemSelectedListener {
 	private static final int HOME_INDEX = 0;
 	private static final int MY_MUSIC_INDEX = 1;
 	private static final int SETTING_INDEX = 2;
@@ -51,12 +57,21 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		initConnection();
-		initHandler();
-		initService();
 		initView();
+		initConnection();
+		initService();
+		initHandler();
 		initReceiver();
 		registerReceiver();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		if (mService != null) {
+			mService.setUIHandler(mHandler);
+			updateMiniPlayer();
+		}
 	}
 
 	@Override
@@ -145,14 +160,15 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 				bundleHome.putParcelableArrayList(EXTRA_GENRES, mGenres);
 				mViewPagerAdapter.getItem(HOME_INDEX).setArguments(bundleHome);
 				mViewPager.setAdapter(mViewPagerAdapter);
+				updateMiniPlayer();
 			}
 		};
 	}
 
 	private void registerReceiver() {
 		LocalBroadcastManager
-				.getInstance(this)
-				.registerReceiver(mReceiver, new IntentFilter(ACTION_LOAD_API));
+			.getInstance(this)
+			.registerReceiver(mReceiver, new IntentFilter(ACTION_LOAD_API));
 	}
 
 	private void initHandler() {
@@ -160,8 +176,33 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 			@Override
 			public void handleMessage(Message msg) {
 				super.handleMessage(msg);
+				switch (msg.what) {
+					case LOADING:
+						HomeFragment.sMiniMediaPlayer.startLoading(msg.arg1);
+						break;
+					case SUCCESS:
+						HomeFragment.sMiniMediaPlayer.loadingSuccess();
+						break;
+					case FAILURE:
+						break;
+					case PAUSED:
+						break;
+					case STOPPED:
+						break;
+					case UPDATE_MINI_PLAYER:
+						HomeFragment.sMiniMediaPlayer.update();
+						break;
+					default:
+						break;
+				}
 			}
 		};
+	}
+
+	private void updateMiniPlayer() {
+		Message message = new Message();
+		message.what = UPDATE_MINI_PLAYER;
+		mHandler.sendMessage(message);
 	}
 
 	private void initConnection() {
@@ -171,6 +212,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 				PlayMusicService.LocalBinder binder = (PlayMusicService.LocalBinder) iBinder;
 				mService = binder.getService();
 				mService.setUIHandler(mHandler);
+				mService.setTracks(mTracks);
 			}
 
 			@Override

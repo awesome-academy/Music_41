@@ -21,8 +21,8 @@ public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.MyViewHold
 	private OnClickItemTrackListener mListener;
 	private boolean mIsNowPlaying;
 	private boolean mIsRecentTracks;
-	private OnClickDeleteListener mDeleteListener;
 	private boolean mIsFavorite;
+	private OnClickDeleteListener mDeleteListener;
 
 	public TracksAdapter(OnClickItemTrackListener listener) {
 		mTracks = new ArrayList<>();
@@ -44,7 +44,7 @@ public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.MyViewHold
 	@Override
 	public MyViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
 		View view = LayoutInflater.from(viewGroup.getContext())
-				.inflate(R.layout.item_track, viewGroup, false);
+			.inflate(R.layout.item_track, viewGroup, false);
 		return new MyViewHolder(view);
 	}
 
@@ -56,6 +56,21 @@ public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.MyViewHold
 	@Override
 	public int getItemCount() {
 		return mTracks != null ? mTracks.size() : 0;
+	}
+
+	public TracksAdapter setNowPlaying(boolean nowPlaying) {
+		mIsNowPlaying = nowPlaying;
+		return this;
+	}
+
+	public TracksAdapter setRecentTracks(boolean recentTracks) {
+		mIsRecentTracks = recentTracks;
+		return this;
+	}
+
+	public TracksAdapter setFavarite(boolean favarite) {
+		mIsFavorite = favarite;
+		return this;
 	}
 
 	public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -75,7 +90,7 @@ public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.MyViewHold
 
 		private void updateItem() {
 			itemView.setBackgroundColor(itemView.getResources()
-					.getColor(R.color.color_black));
+				.getColor(R.color.color_black));
 		}
 
 		public void bindData(Track track,
@@ -104,9 +119,9 @@ public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.MyViewHold
 			RequestOptions requestOptions = new RequestOptions();
 			requestOptions.error(R.drawable.default_album);
 			Glide.with(image.getContext())
-					.load(source)
-					.apply(requestOptions)
-					.into(image);
+				.load(source)
+				.apply(requestOptions)
+				.into(image);
 		}
 	}
 

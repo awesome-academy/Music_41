@@ -1,6 +1,7 @@
 package com.cris.nvh.framgiaproject.service;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.Handler;
@@ -9,13 +10,23 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 
+import com.cris.nvh.framgiaproject.data.model.Track;
 import com.cris.nvh.framgiaproject.mediaplayer.MediaPlayerManager;
 
+import java.util.List;
+
+import static com.cris.nvh.framgiaproject.mediaplayer.MediaRequest.FAILURE;
+import static com.cris.nvh.framgiaproject.mediaplayer.MediaRequest.LOADING;
+import static com.cris.nvh.framgiaproject.mediaplayer.MediaRequest.PAUSED;
+import static com.cris.nvh.framgiaproject.mediaplayer.MediaRequest.STOPPED;
+import static com.cris.nvh.framgiaproject.mediaplayer.MediaRequest.SUCCESS;
+import static com.cris.nvh.framgiaproject.mediaplayer.MediaRequest.UPDATE_MINI_PLAYER;
+
 public class PlayMusicService extends Service implements IService,
-		MediaPlayerManager.OnLoadingTrackListener {
+	MediaPlayerManager.OnLoadingTrackListener {
 
 	public static final String EXTRA_REQUEST_CODE =
-			"com.cris.nvh.framgiaproject.service.EXTRA.REQUEST_CODE";
+		"com.cris.nvh.framgiaproject.service.EXTRA.REQUEST_CODE";
 	private static final int REQUEST_CREATE = 0;
 	private static final int REQUEST_NEXT = 1;
 	private static final int REQUEST_PREVIOUS = 2;
@@ -26,7 +37,7 @@ public class PlayMusicService extends Service implements IService,
 	private static final String WORKER_THREAD_NAME = "ServiceThread";
 	private static final int VALUE_NEXT_SONG = 4;
 	private static final int VALUE_PREVIOUS_SONG = 5;
-	private static final int VALUE_PLAY_SONG = 6;
+	private static final int VALUE_PLAY_SONG = 2;
 	private static Handler mUIHandler;
 	private final IBinder mBinder = new LocalBinder();
 	private Looper mServiceLooper;
@@ -54,10 +65,17 @@ public class PlayMusicService extends Service implements IService,
 			int request = intent.getIntExtra(EXTRA_REQUEST_CODE, 0);
 			switch (request) {
 				case VALUE_NEXT_SONG:
+					nextTrack();
 					break;
 				case VALUE_PREVIOUS_SONG:
+					previousTrack();
 					break;
 				case VALUE_PLAY_SONG:
+					if (isPlaying()) {
+						pauseTrack();
+					} else {
+						startTrack();
+					}
 					break;
 				default:
 					break;
@@ -137,34 +155,57 @@ public class PlayMusicService extends Service implements IService,
 
 	@Override
 	public void onStartLoading(int index) {
+		if (mUIHandler != null) {
+			Message message = new Message();
+			message.arg1 = index;
+			message.what = LOADING;
+			mUIHandler.sendMessage(message);
+		}
 	}
 
 	@Override
 	public void onLoadingFail(String message) {
+		Message msg = new Message();
+		msg.what = FAILURE;
+		msg.obj = message;
+		mUIHandler.sendMessage(msg);
 	}
 
 	@Override
 	public void onLoadingSuccess() {
+		mUIHandler.sendEmptyMessage(SUCCESS);
 	}
 
 	@Override
 	public void onTrackPaused() {
+		mUIHandler.sendEmptyMessage(PAUSED);
 	}
 
 	@Override
 	public void onTrackStopped() {
+		mUIHandler.sendEmptyMessage(STOPPED);
+	}
+
+	public void onChangeTrack() {
+		mUIHandler.sendEmptyMessage(UPDATE_MINI_PLAYER);
+	}
+
+
+	public static Intent getMyServiceIntent(Context context) {
+		Intent intent = new Intent(context, PlayMusicService.class);
+		return intent;
 	}
 
 	public void createTrack(int index) {
 		sendMessage(REQUEST_CREATE, index);
 	}
 
-	public void nextTrack(int index) {
-		sendMessage(REQUEST_NEXT, index);
+	public void nextTrack() {
+		mServiceHandler.sendEmptyMessage(REQUEST_NEXT);
 	}
 
-	public void previousTrack(int index) {
-		sendMessage(REQUEST_PREVIOUS, index);
+	public void previousTrack() {
+		mServiceHandler.sendEmptyMessage(REQUEST_PREVIOUS);
 	}
 
 	public void startTrack() {
@@ -181,6 +222,19 @@ public class PlayMusicService extends Service implements IService,
 
 	public void requestPrepareAsync() {
 		mServiceHandler.sendEmptyMessage(REQUEST_PREPARE);
+	}
+
+	public List<Track> getTracks() {
+		return mMediaPlayerManager.getTracks();
+	}
+
+	public PlayMusicService setTracks(List<Track> tracks) {
+		mMediaPlayerManager.setTracks(tracks);
+		return this;
+	}
+
+	public MediaPlayerManager getMediaPlayerManager() {
+		return mMediaPlayerManager;
 	}
 
 	public void sendMessage(int request, int index) {

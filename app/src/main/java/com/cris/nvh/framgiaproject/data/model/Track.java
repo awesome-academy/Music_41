@@ -19,11 +19,12 @@ public class Track implements Parcelable {
 	private String mTitle;
 	private String mArtist;
 	private String mArtistImage;
+	private String mStreamUrl;
 	private boolean mIsOffline;
 
 	public final static Parcelable.Creator<Track> CREATOR = new Creator<Track>() {
 		@SuppressWarnings({
-				"unchecked"
+			"unchecked"
 		})
 		public Track createFromParcel(Parcel in) {
 			return new Track(in);
@@ -51,6 +52,8 @@ public class Track implements Parcelable {
 		mTitle = in.readString();
 		mArtist = in.readString();
 		mArtistImage = in.readString();
+		mStreamUrl = in.readString();
+		mIsOffline = in.readByte() != 0;
 	}
 
 	public void writeToParcel(Parcel dest, int flags) {
@@ -63,6 +66,8 @@ public class Track implements Parcelable {
 		dest.writeString(mTitle);
 		dest.writeString(mArtist);
 		dest.writeString(mArtistImage);
+		dest.writeString(mStreamUrl);
+		dest.writeByte((byte) (mIsOffline ? 1 : 0));
 	}
 
 	public int describeContents() {
@@ -147,5 +152,13 @@ public class Track implements Parcelable {
 
 	public void setOffline(boolean offline) {
 		mIsOffline = offline;
+	}
+
+	public String getStreamUrl() {
+		return mStreamUrl;
+	}
+
+	public void setStreamUrl(String streamUrl) {
+		mStreamUrl = streamUrl;
 	}
 }
