@@ -15,8 +15,6 @@ public class MediaPlayerManager extends MediaPlayerSetting implements PlayMusic,
 	MediaPlayer.OnCompletionListener, MediaPlayer.OnPreparedListener {
 
 	private static final int CHANGE_POSITION = 1;
-	private static int sLoopType = 0;
-	private static int sShuffleType;
 	private static MediaPlayerManager sInstance;
 	private Context mContext;
 	private MediaPlayer mMediaPlayer;
@@ -28,8 +26,8 @@ public class MediaPlayerManager extends MediaPlayerSetting implements PlayMusic,
 	private MediaPlayerManager(Context context) {
 		mContext = context;
 		mListener = (OnLoadingTrackListener) context;
-		sLoopType = LoopType.NONE;
-		sShuffleType = ShuffleType.OFF;
+		mLoopType = getLoopType();
+		mShuffleType = getShuffleType();
 	}
 
 	public static MediaPlayerManager getsInstance(Context context) {
@@ -43,7 +41,7 @@ public class MediaPlayerManager extends MediaPlayerSetting implements PlayMusic,
 	public void create(int index) {
 		mCurrentIndex = index;
 		Track track = mTracks.get(mCurrentIndex);
-		mListener.onStartLoading(index);
+		mListener.onStartLoading();
 		if (mMediaPlayer != null) {
 			mMediaPlayer.reset();
 			mState = StatusPlayerType.IDLE;
@@ -101,7 +99,7 @@ public class MediaPlayerManager extends MediaPlayerSetting implements PlayMusic,
 
 	@Override
 	public int getDuration() {
-		if (mMediaPlayer != null && mState != StatusPlayerType.IDLE) {
+		if (mMediaPlayer != null && mState == StatusPlayerType.STARTED) {
 			return mMediaPlayer.getDuration();
 		}
 		return 0;
@@ -141,7 +139,7 @@ public class MediaPlayerManager extends MediaPlayerSetting implements PlayMusic,
 
 	@Override
 	public void next() {
-		if (MediaPlayerSetting.ShuffleType.ON == sShuffleType) {
+		if (mShuffleType == MediaPlayerSetting.ShuffleType.ON) {
 			mCurrentIndex = ramdomSong();
 			create(mCurrentIndex);
 			mListener.onChangeTrack();
@@ -167,7 +165,7 @@ public class MediaPlayerManager extends MediaPlayerSetting implements PlayMusic,
 
 	@Override
 	public void onCompletion(MediaPlayer mediaPlayer) {
-		switch (sLoopType) {
+		switch (mLoopType) {
 			case LoopType.NONE:
 				if (mCurrentIndex == mTracks.size() - CHANGE_POSITION
 					&& mState != StatusPlayerType.STOPPED) {
@@ -189,7 +187,7 @@ public class MediaPlayerManager extends MediaPlayerSetting implements PlayMusic,
 
 	@Override
 	public void onPrepared(MediaPlayer mediaPlayer) {
-		mediaPlayer.start();
+		start();
 		mListener.onChangeTrack();
 	}
 
@@ -246,7 +244,7 @@ public class MediaPlayerManager extends MediaPlayerSetting implements PlayMusic,
 	}
 
 	public interface OnLoadingTrackListener {
-		void onStartLoading(int index);
+		void onStartLoading();
 
 		void onLoadingFail(String message);
 

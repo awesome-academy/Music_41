@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.Parcelable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -25,9 +24,6 @@ import com.cris.nvh.framgiaproject.adapter.GenreAdapter;
 import com.cris.nvh.framgiaproject.adapter.TracksAdapter;
 import com.cris.nvh.framgiaproject.adapter.TracksSlideAdapter;
 import com.cris.nvh.framgiaproject.data.model.Genre;
-import com.cris.nvh.framgiaproject.data.model.Track;
-import com.cris.nvh.framgiaproject.screen.listtracks.ListTracksActivity;
-import com.cris.nvh.framgiaproject.screen.playing.PlayActivity;
 import com.cris.nvh.framgiaproject.screen.search.SearchActivity;
 import com.cris.nvh.framgiaproject.service.PlayMusicService;
 
@@ -36,12 +32,10 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static com.cris.nvh.framgiaproject.MainActivity.getMyServiceIntent;
-import static com.cris.nvh.framgiaproject.screen.listtracks.ListTracksActivity.EXTRA_TITLE;
-import static com.cris.nvh.framgiaproject.screen.listtracks.ListTracksActivity.EXTRA_TRACK;
-import static com.cris.nvh.framgiaproject.screen.playing.PlayActivity.EXTRA_PLAY_INDEX;
-import static com.cris.nvh.framgiaproject.screen.playing.PlayActivity.EXTRA_PLAY_TRACKS;
+import static com.cris.nvh.framgiaproject.screen.listtracks.ListTracksActivity.getListTracksActivityIntent;
+import static com.cris.nvh.framgiaproject.screen.playing.PlayActivity.getPlayActivityIntent;
 import static com.cris.nvh.framgiaproject.screen.splash.SplashActivity.EXTRA_GENRES;
+import static com.cris.nvh.framgiaproject.service.PlayMusicService.getMyServiceIntent;
 
 /**
  * Created by nvh
@@ -116,11 +110,10 @@ public class HomeFragment extends Fragment implements
 
 	@Override
 	public void onTrackClick(int genreIndex, int trackIndex) {
-		startActivity(getPlayActivityIntent(getActivity(),
-			(ArrayList<Track>) mGenres.get(genreIndex).getTracks(), trackIndex));
-		mAdapter.setRecentTracks(true);
 		mService.setTracks(mGenres.get(genreIndex).getTracks());
 		mService.createTrack(trackIndex);
+		mAdapter.setRecentTracks(true);
+		startActivity(getPlayActivityIntent(getActivity()));
 	}
 
 	@Override
@@ -136,25 +129,9 @@ public class HomeFragment extends Fragment implements
 		return homeFragment;
 	}
 
-	public static Intent getPlayActivityIntent(Context context, List<Track> tracks, int index) {
-		Intent intent = new Intent(context, PlayActivity.class);
-		intent.putParcelableArrayListExtra(EXTRA_PLAY_TRACKS,
-			(ArrayList<? extends Parcelable>) tracks);
-		intent.putExtra(EXTRA_PLAY_INDEX, index);
-		return intent;
-	}
-
 	public static Intent getSearchActivityIntent(Context context, String value) {
 		Intent intent = new Intent(context, SearchActivity.class);
 		intent.putExtra(EXTRA_SEARCH, value);
-		return intent;
-	}
-
-	public static Intent getListTracksActivityIntent(Context context, List<Track> tracks, int index) {
-		Intent intent = new Intent(context, ListTracksActivity.class);
-		intent.putParcelableArrayListExtra(EXTRA_TRACK,
-			(ArrayList<? extends Parcelable>) tracks);
-		intent.putExtra(EXTRA_TITLE, index);
 		return intent;
 	}
 

@@ -37,6 +37,7 @@ import static com.cris.nvh.framgiaproject.mediaplayer.MediaRequest.UPDATE_MINI_P
 import static com.cris.nvh.framgiaproject.screen.splash.SplashActivity.ACTION_LOAD_API;
 import static com.cris.nvh.framgiaproject.screen.splash.SplashActivity.EXTRA_GENRES;
 import static com.cris.nvh.framgiaproject.screen.splash.SplashActivity.EXTRA_TRACKS;
+import static com.cris.nvh.framgiaproject.service.PlayMusicService.getMyServiceIntent;
 
 public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener,
 	BottomNavigationView.OnNavigationItemSelectedListener {
@@ -76,8 +77,10 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
 	@Override
 	protected void onDestroy() {
-		unbindService(mConnection);
 		super.onDestroy();
+		unbindService(mConnection);
+		if (!mService.isPlaying())
+			stopService(getMyServiceIntent(this));
 	}
 
 	@Override
@@ -109,11 +112,6 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
 	@Override
 	public void onPageScrollStateChanged(int i) {
-	}
-
-	public static Intent getMyServiceIntent(Context context) {
-		Intent intent = new Intent(context, PlayMusicService.class);
-		return intent;
 	}
 
 	private void initService() {
@@ -160,7 +158,6 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 				bundleHome.putParcelableArrayList(EXTRA_GENRES, mGenres);
 				mViewPagerAdapter.getItem(HOME_INDEX).setArguments(bundleHome);
 				mViewPager.setAdapter(mViewPagerAdapter);
-				updateMiniPlayer();
 			}
 		};
 	}
@@ -178,7 +175,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 				super.handleMessage(msg);
 				switch (msg.what) {
 					case LOADING:
-						HomeFragment.sMiniMediaPlayer.startLoading(msg.arg1);
+						HomeFragment.sMiniMediaPlayer.startLoading();
 						break;
 					case SUCCESS:
 						HomeFragment.sMiniMediaPlayer.loadingSuccess();
