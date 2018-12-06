@@ -1,7 +1,5 @@
 package com.cris.nvh.framgiaproject;
 
-import android.content.Context;
-import android.content.Intent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -10,14 +8,15 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.cris.nvh.framgiaproject.data.model.Track;
 import com.cris.nvh.framgiaproject.mediaplayer.PlayMusic;
-import com.cris.nvh.framgiaproject.screen.playing.PlayActivity;
 import com.cris.nvh.framgiaproject.service.PlayMusicService;
 
 import java.util.List;
 
+import static com.cris.nvh.framgiaproject.screen.playing.PlayActivity.getPlayActivityIntent;
+
 public class MiniMediaPlayer implements View.OnClickListener {
 	private static final String NULL = "null";
-	private static PlayMusicService sService;
+	private PlayMusicService mService;
 	private TextView mTrackName;
 	private TextView mTrackSinger;
 	private ImageView mImageNext;
@@ -41,13 +40,15 @@ public class MiniMediaPlayer implements View.OnClickListener {
 				previous();
 				break;
 			case R.id.button_change_state:
-				if (!sService.isPlaying()) {
+				if (!mService.isPlaying()) {
 					play();
 					return;
 				}
 				pause();
 				break;
 			case R.id.image_track:
+				if (!mService.isPlaying())
+					mService.createTrack(mService.getTrack());
 				mMiniMediaPlayer.getContext()
 					.startActivity(getPlayActivityIntent(mMiniMediaPlayer.getContext()));
 				break;
@@ -56,83 +57,65 @@ public class MiniMediaPlayer implements View.OnClickListener {
 		}
 	}
 
-	private Intent getPlayActivityIntent(Context context) {
-		Intent intent = new Intent(context, PlayActivity.class);
-		return intent;
-	}
-
-	public TextView getTrackName() {
-		return mTrackName;
-	}
-
-	public TextView getTrackSinger() {
-		return mTrackSinger;
-	}
-
-	public ImageView getTrackImage() {
-		return mTrackImage;
-	}
-
 	public PlayMusicService getService() {
-		return sService;
+		return mService;
 	}
 
 	public void setService(PlayMusicService service) {
-		sService = service;
+		mService = service;
 	}
 
-	public void pause() {
-		mImageChangeState.setBackgroundResource(R.drawable.ic_play);
-		sService.pauseTrack();
-	}
-
-	public void play() {
-		mImageChangeState.setBackgroundResource(R.drawable.ic_pause);
-		int mediaStatus = sService.getMediaPlayerManager().getState();
-		if (mediaStatus == PlayMusic.StatusPlayerType.STOPPED) {
-			sService.requestPrepareAsync();
-			return;
-		}
-		sService.startTrack();
-	}
-
-	public void next() {
-		sService.nextTrack();
-	}
-
-	public void previous() {
-		sService.previousTrack();
+	public void startLoading() {
+		mImageChangeState.setClickable(false);
+		mImageNext.setClickable(false);
+		mImagePrevious.setClickable(false);
+		Track track = mService.getTracks().get(mService.getTrack());
+		mTrackSinger.setText(track.getArtist());
+		mTrackName.setText(track.getTitle());
+		setImageAlbum(track);
 	}
 
 	public void loadingSuccess() {
-	}
-
-	public void startLoading(int index) {
-		mMiniMediaPlayer.setVisibility(View.VISIBLE);
-		Track track = sService.getTracks().get(index);
-		mTrackSinger.setText(track.getArtist());
-		mTrackName.setText(track.getTitle());
-		Glide.with(mMiniMediaPlayer)
-			.load(track.getArtworkUrl())
-			.into(mTrackImage);
+		mImageChangeState.setClickable(true);
+		mImageNext.setClickable(true);
+		mImagePrevious.setClickable(true);
 	}
 
 	public void update() {
-		List<Track> tracks = sService.getTracks();
-		int index = sService.getTrack();
-		updateCurrentTrack(tracks.get(index));
-	}
-
-	private void updateCurrentTrack(Track track) {
-		mTrackName.setText(track.getTitle());
-		mTrackSinger.setText(track.getArtist());
-		setImageAlbum(track);
-		if (sService.isPlaying()) {
+		List<Track> tracks = mService.getTracks();
+		int index = mService.getTrack();
+		mTrackName.setText(tracks.get(index).getTitle());
+		mTrackSinger.setText(tracks.get(index).getArtist());
+		setImageAlbum(tracks.get(index));
+		if (mService != null && mService.isPlaying()) {
 			mImageChangeState.setBackgroundResource(R.drawable.ic_pause);
 			return;
 		}
 		mImageChangeState.setBackgroundResource(R.drawable.ic_play);
+	}
 
+	private void pause() {
+		mImageChangeState.setBackgroundResource(R.drawable.ic_play);
+		mService.pauseTrack();
+	}
+
+	private void play() {
+		mImageChangeState.setBackgroundResource(R.drawable.ic_pause);
+		int mediaStatus = mService.getMediaPlayerManager().getState();
+		Track currentTrack = mService.getTracks().get(mService.getTrack());
+		if (!currentTrack.isOffline() && mediaStatus == PlayMusic.StatusPlayerType.STOPPED) {
+			mService.requestPrepareAsync();
+			return;
+		}
+		mService.startTrack();
+	}
+
+	private void next() {
+		mService.nextTrack();
+	}
+
+	private void previous() {
+		mService.previousTrack();
 	}
 
 	private void setImageAlbum(Track track) {
@@ -162,5 +145,7 @@ public class MiniMediaPlayer implements View.OnClickListener {
 		mImagePrevious.setOnClickListener(this);
 		mTrackImage.setOnClickListener(this);
 		mMiniMediaPlayer.setOnClickListener(this);
+		mTrackName.setSelected(true);
+		mTrackSinger.setSelected(true);
 	}
 }

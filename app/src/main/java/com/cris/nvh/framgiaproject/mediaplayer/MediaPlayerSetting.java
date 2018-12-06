@@ -11,8 +11,8 @@ import java.lang.annotation.RetentionPolicy;
  */
 
 public class MediaPlayerSetting {
-	private int mLoopType;
-	private int mShuffleType;
+	protected int mLoopType;
+	protected int mShuffleType;
 
 	public int getShuffleType() {
 		return mShuffleType;

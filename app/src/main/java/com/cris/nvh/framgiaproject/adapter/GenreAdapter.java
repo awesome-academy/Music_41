@@ -25,8 +25,8 @@ import static android.support.v7.widget.LinearLayoutManager.HORIZONTAL;
  */
 
 public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.GenreViewHolder> {
-	private static final String ARTWORK_DEFAULT_SIZE = "large";
-	private static final String ARTWORK_MAX_SIZE = "t500x500";
+	public static final String ARTWORK_DEFAULT_SIZE = "large";
+	public static final String ARTWORK_MAX_SIZE = "t500x500";
 	private static final int ALL_MUSIC_INDEX = 0;
 	private static final int ALL_AUDIO_INDEX = 1;
 	private static final int ALL_ALTERNATIVE_INDEX = 2;

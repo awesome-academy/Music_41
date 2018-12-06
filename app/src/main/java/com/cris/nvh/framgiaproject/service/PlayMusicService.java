@@ -13,6 +13,7 @@ import android.os.Message;
 import com.cris.nvh.framgiaproject.data.model.Track;
 import com.cris.nvh.framgiaproject.mediaplayer.MediaPlayerManager;
 
+import java.io.Serializable;
 import java.util.List;
 
 import static com.cris.nvh.framgiaproject.mediaplayer.MediaRequest.FAILURE;
@@ -22,7 +23,7 @@ import static com.cris.nvh.framgiaproject.mediaplayer.MediaRequest.STOPPED;
 import static com.cris.nvh.framgiaproject.mediaplayer.MediaRequest.SUCCESS;
 import static com.cris.nvh.framgiaproject.mediaplayer.MediaRequest.UPDATE_MINI_PLAYER;
 
-public class PlayMusicService extends Service implements IService,
+public class PlayMusicService extends Service implements IService, Serializable,
 	MediaPlayerManager.OnLoadingTrackListener {
 
 	public static final String EXTRA_REQUEST_CODE =
@@ -154,12 +155,9 @@ public class PlayMusicService extends Service implements IService,
 	}
 
 	@Override
-	public void onStartLoading(int index) {
+	public void onStartLoading() {
 		if (mUIHandler != null) {
-			Message message = new Message();
-			message.arg1 = index;
-			message.what = LOADING;
-			mUIHandler.sendMessage(message);
+			mUIHandler.sendEmptyMessage(LOADING);
 		}
 	}
 

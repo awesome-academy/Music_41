@@ -23,4 +23,8 @@
     <string name="default_time">0:00</string>
     <string name="text_now_playing">Now playing</string>
     <string name="text_results">Results</string>
+    <string name="text_add_success">Add track successfull</string>
+    <string name="notify_file_exists">File already existed</string>
+    <string name="confirm_yes">Yes</string>
+    <string name="confirm_no">No</string>
 </resources>

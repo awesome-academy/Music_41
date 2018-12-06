@@ -1,10 +1,12 @@
 package com.cris.nvh.framgiaproject.screen.listtracks;
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,8 +21,8 @@ import com.cris.nvh.framgiaproject.data.model.Track;
 import com.cris.nvh.framgiaproject.service.PlayMusicService;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import static com.cris.nvh.framgiaproject.MainActivity.getMyServiceIntent;
 import static com.cris.nvh.framgiaproject.screen.listtracks.TrackTypes.ALL_AUDIO;
 import static com.cris.nvh.framgiaproject.screen.listtracks.TrackTypes.ALL_MUSIC;
 import static com.cris.nvh.framgiaproject.screen.listtracks.TrackTypes.ALTERNATIVE;
@@ -30,6 +32,7 @@ import static com.cris.nvh.framgiaproject.screen.listtracks.TrackTypes.COUNTRY;
 import static com.cris.nvh.framgiaproject.screen.listtracks.TrackTypes.DOWNLOAD;
 import static com.cris.nvh.framgiaproject.screen.listtracks.TrackTypes.FAVORITES;
 import static com.cris.nvh.framgiaproject.screen.listtracks.TrackTypes.LOCAL;
+import static com.cris.nvh.framgiaproject.service.PlayMusicService.getMyServiceIntent;
 
 public class ListTracksActivity extends AppCompatActivity implements View.OnClickListener, TracksAdapter.OnClickItemTrackListener {
 	public static final String EXTRA_TRACK =
@@ -81,6 +84,14 @@ public class ListTracksActivity extends AppCompatActivity implements View.OnClic
 			default:
 				break;
 		}
+	}
+
+	public static Intent getListTracksActivityIntent(Context context, List<Track> tracks, int index) {
+		Intent intent = new Intent(context, ListTracksActivity.class);
+		intent.putParcelableArrayListExtra(EXTRA_TRACK,
+			(ArrayList<? extends Parcelable>) tracks);
+		intent.putExtra(EXTRA_TITLE, index);
+		return intent;
 	}
 
 	private void bindToService() {
