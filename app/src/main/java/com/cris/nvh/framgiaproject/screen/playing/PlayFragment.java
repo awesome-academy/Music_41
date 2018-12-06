@@ -13,6 +13,7 @@ import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -48,7 +49,6 @@ public class PlayFragment extends Fragment implements View.OnClickListener,
 	private boolean mHasPermission;
 	private ImageView mImageAlbum;
 	private PlayMusicService mService;
-	private boolean mIsBoundService;
 	private ImageView mButtonBack;
 	private ImageView mButtonMore;
 	private ImageView mButtonFavorite;
@@ -89,10 +89,12 @@ public class PlayFragment extends Fragment implements View.OnClickListener,
 
 	@Override
 	public void onFail(String message) {
+		Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
 	public void onAddTracksSuccess(String message) {
+		Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
@@ -156,6 +158,40 @@ public class PlayFragment extends Fragment implements View.OnClickListener,
 		mService = service;
 	}
 
+	public void startLoading() {
+		if (mPresenter.isFavoriteTrack(mService.getTracks().get(mService.getTrack())))
+			mButtonFavorite.setImageResource(R.drawable.ic_favorite);
+		else mButtonFavorite.setImageResource(R.drawable.ic_favorite_none);
+		mSeekBar.setEnabled(false);
+		mButtonChangeState.setClickable(false);
+		mButtonNext.setClickable(false);
+		mButtonPrevious.setClickable(false);
+		mTrack = mService.getTracks().get(mService.getTrack());
+		mTextSinger.setText(mTrack.getArtist());
+		mTextSong.setText(mTrack.getTitle());
+		mSeekBar.setProgress(START_POSITION);
+		mTextCurrentPosition.setText(convertMilisecondToFormatTime(START_POSITION));
+		mTextDuration.setText(convertMilisecondToFormatTime(START_POSITION));
+		setImageAlbum(mTrack.getArtworkUrl());
+		mButtonChangeState.setImageResource(R.drawable.ic_play);
+	}
+
+	public void loadingSuccess() {
+		mSeekBar.setEnabled(true);
+		int duration = mService.getDuration();
+		mButtonChangeState.setClickable(true);
+		mButtonPrevious.setClickable(true);
+		mButtonNext.setClickable(true);
+		mButtonChangeState.setImageResource(R.drawable.ic_pause);
+		mSeekBar.setMax(duration);
+		mTextDuration.setText(convertMilisecondToFormatTime(duration));
+		mHandler.sendEmptyMessage(UPDATE_SEEKBAR);
+	}
+
+	public void requestUpdateSeekBar() {
+		updateSeekBar();
+	}
+
 	private void initView(View view) {
 		mHasPermission = false;
 		mButtonBack = view.findViewById(R.id.image_back_button);
@@ -174,7 +210,6 @@ public class PlayFragment extends Fragment implements View.OnClickListener,
 		mImageAlbum = view.findViewById(R.id.image_album);
 		mTextSong.setSelected(true);
 		mTextSinger.setSelected(true);
-//		getData(view);
 		setListener();
 	}
 
@@ -214,7 +249,11 @@ public class PlayFragment extends Fragment implements View.OnClickListener,
 	}
 
 	private void updateUI() {
-		mTrack = mService.getTracks().get(mService.getTrack());
+		if (mPresenter.isFavoriteTrack(mService.getTracks().get(mService.getTrack())))
+			mButtonFavorite.setImageResource(R.drawable.ic_favorite);
+		else mButtonFavorite.setImageResource(R.drawable.ic_favorite_none);
+		int index = mService.getTrack();
+		mTrack = mService.getTracks().get(index);
 		int duration = mService.getDuration();
 		mTextSong.setText(mTrack.getTitle());
 		mTextSinger.setText(mTrack.getArtist());
@@ -229,10 +268,6 @@ public class PlayFragment extends Fragment implements View.OnClickListener,
 		mHandler.sendEmptyMessage(UPDATE_SEEKBAR);
 	}
 
-//	public void requestUpdate(int index) {
-//		updateUI(index);
-//	}
-
 	private void updatePlayImage(boolean isPlaying) {
 		if (isPlaying) {
 			mButtonChangeState.setImageResource(R.drawable.ic_pause);
@@ -241,46 +276,12 @@ public class PlayFragment extends Fragment implements View.OnClickListener,
 		mButtonChangeState.setImageResource(R.drawable.ic_play);
 	}
 
-	public void startLoading() {
-		if (mPresenter.isFavoriteTrack(mService.getTracks().get(mService.getTrack())))
-			mButtonFavorite.setImageResource(R.drawable.ic_favorite);
-		else mButtonFavorite.setImageResource(R.drawable.ic_favorite_none);
-		mSeekBar.setEnabled(false);
-		mButtonChangeState.setClickable(false);
-		mButtonNext.setClickable(false);
-		mButtonPrevious.setClickable(false);
-		mTrack = mService.getTracks().get(mService.getTrack());
-		mTextSinger.setText(mTrack.getArtist());
-		mTextSong.setText(mTrack.getTitle());
-		mSeekBar.setProgress(START_POSITION);
-		mTextCurrentPosition.setText(convertMilisecondToFormatTime(START_POSITION));
-		mTextDuration.setText(convertMilisecondToFormatTime(START_POSITION));
-		setImageAlbum(mTrack.getArtworkUrl());
-		mButtonChangeState.setImageResource(R.drawable.ic_play);
-	}
-
-	public void loadingSuccess() {
-		mSeekBar.setEnabled(true);
-		int duration = mService.getDuration();
-		mButtonChangeState.setClickable(true);
-		mButtonPrevious.setClickable(true);
-		mButtonNext.setClickable(true);
-		mButtonChangeState.setImageResource(R.drawable.ic_pause);
-		mSeekBar.setMax(duration);
-		mTextDuration.setText(convertMilisecondToFormatTime(duration));
-		mHandler.sendEmptyMessage(UPDATE_SEEKBAR);
-	}
-
-	public void requestUpdateSeekBar() {
-		updateSeekBar();
-	}
-
-	public void pause() {
+	private void pause() {
 		mButtonChangeState.setImageResource(R.drawable.ic_play);
 		mService.pauseTrack();
 	}
 
-	public void play() {
+	private void play() {
 		mButtonChangeState.setImageResource(R.drawable.ic_pause);
 		int mediaStatus = mService.getMediaPlayerManager().getState();
 		if (mediaStatus == PlayMusic.StatusPlayerType.STOPPED) {
@@ -373,6 +374,14 @@ public class PlayFragment extends Fragment implements View.OnClickListener,
 	}
 
 	private void addToFavorites() {
+		mTrack = mService.getTracks().get(mService.getTrack());
+		if (mPresenter.isFavoriteTrack(mTrack)) {
+			mButtonFavorite.setImageResource(R.drawable.ic_favorite_none);
+			mPresenter.deleteFavoriteTrack(mTrack);
+			return;
+		}
+		mButtonFavorite.setImageResource(R.drawable.ic_favorite);
+		mPresenter.addFavoriteTracks(mTrack);
 	}
 
 	private void initPresenter() {

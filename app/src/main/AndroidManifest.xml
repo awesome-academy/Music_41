@@ -28,6 +28,7 @@
         <activity android:name=".screen.genres.GenresActivity" />
         <activity android:name=".screen.search.SearchActivity" />
         <activity android:name=".screen.listtracks.ListTracksActivity" />
+        <activity android:name=".screen.favorite.FavoriteActivity" />
 
         <service android:name=".service.PlayMusicService" />
     </application>

@@ -22,24 +22,36 @@ public class PlayPresenter implements PlayContract.Presenter {
 
 	@Override
 	public void addFavoriteTracks(Track track) {
-		mRepository.addFavoriteTrack(track, new TracksDataSource.LoadDataCallBack<Boolean>() {
+		mRepository.addFavoriteTrack(track, new TracksDataSource.LoadDataCallBack<String>() {
 			@Override
-			public void onSuccess(List<Boolean> datas) {
+			public void onSuccess(List<String> results) {
+				mView.onAddTracksSuccess(results.get(0));
 			}
 
 			@Override
 			public void onFail(String msg) {
+				mView.onFail(msg);
 			}
 		});
 	}
 
 	@Override
 	public boolean isFavoriteTrack(Track track) {
-		return false;
+		return mRepository.isAddedToFavorite(track);
 	}
 
 	@Override
 	public void deleteFavoriteTrack(Track track) {
+		mRepository.deleteFavoriteTrack(track, new TracksDataSource.LoadDataCallBack<String>() {
+			@Override
+			public void onSuccess(List<String> results) {
+				mView.onAddTracksSuccess(results.get(0));
+			}
 
+			@Override
+			public void onFail(String msg) {
+				mView.onFail(msg);
+			}
+		});
 	}
 }

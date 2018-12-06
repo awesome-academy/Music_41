@@ -27,4 +27,8 @@
     <string name="notify_file_exists">File already existed</string>
     <string name="confirm_yes">Yes</string>
     <string name="confirm_no">No</string>
+    <string name="text_delete_success">Delete successfull</string>
+    <string name="add_favorite_successfull">Add successfull</string>
+    <string name="add_favorite_failed">Add failed</string>
+    <string name="delete_failed">Delete failed</string>
 </resources>

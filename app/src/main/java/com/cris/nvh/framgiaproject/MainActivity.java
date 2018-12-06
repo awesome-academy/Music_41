@@ -140,9 +140,10 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 		HomeFragment homeFragment = HomeFragment.newInstance();
 		MyMusicFragment myMusicFragment = MyMusicFragment.newInstance();
 		SettingFragment settingFragment = SettingFragment.newInstance();
-		Bundle bundleMyMusic = new Bundle();
-		bundleMyMusic.putParcelableArrayList(EXTRA_TRACKS, tracks);
-		myMusicFragment.setArguments(bundleMyMusic);
+		Bundle bundle = new Bundle();
+		bundle.putParcelableArrayList(EXTRA_TRACKS, tracks);
+		myMusicFragment.setArguments(bundle);
+		homeFragment.setArguments(bundle);
 		mViewPagerAdapter.addFragment(homeFragment);
 		mViewPagerAdapter.addFragment(myMusicFragment);
 		mViewPagerAdapter.addFragment(settingFragment);
@@ -209,7 +210,6 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 				PlayMusicService.LocalBinder binder = (PlayMusicService.LocalBinder) iBinder;
 				mService = binder.getService();
 				mService.setUIHandler(mHandler);
-				mService.setTracks(mTracks);
 			}
 
 			@Override
