@@ -15,6 +15,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -24,6 +25,7 @@ import com.cris.nvh.framgiaproject.adapter.GenreAdapter;
 import com.cris.nvh.framgiaproject.adapter.TracksAdapter;
 import com.cris.nvh.framgiaproject.adapter.TracksSlideAdapter;
 import com.cris.nvh.framgiaproject.data.model.Genre;
+import com.cris.nvh.framgiaproject.data.model.Track;
 import com.cris.nvh.framgiaproject.screen.search.SearchActivity;
 import com.cris.nvh.framgiaproject.service.PlayMusicService;
 
@@ -32,9 +34,11 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static com.cris.nvh.framgiaproject.screen.favorite.FavoriteActivity.getFavoriteActivityIntent;
 import static com.cris.nvh.framgiaproject.screen.listtracks.ListTracksActivity.getListTracksActivityIntent;
 import static com.cris.nvh.framgiaproject.screen.playing.PlayActivity.getPlayActivityIntent;
 import static com.cris.nvh.framgiaproject.screen.splash.SplashActivity.EXTRA_GENRES;
+import static com.cris.nvh.framgiaproject.screen.splash.SplashActivity.EXTRA_TRACKS;
 import static com.cris.nvh.framgiaproject.service.PlayMusicService.getMyServiceIntent;
 
 /**
@@ -58,10 +62,12 @@ public class HomeFragment extends Fragment implements
 	private ImageView mImageSearch;
 	private EditText mEditSearch;
 	private List<Genre> mGenres;
+	private List<Track> mTracks;
 	private ServiceConnection mConnection;
 	private Activity mActivity;
 	private TracksAdapter mAdapter;
 	private View mViewMiniMediaPlayer;
+	private Button mButtonFavorite;
 
 	@Override
 	public void onAttach(Activity activity) {
@@ -97,6 +103,8 @@ public class HomeFragment extends Fragment implements
 			case R.id.image_search:
 				startActivity(getSearchActivityIntent(getActivity(),
 					mEditSearch.getText().toString()));
+			case R.id.button_favorite:
+				startActivity(getFavoriteActivityIntent(getActivity()));
 			default:
 				break;
 		}
@@ -104,6 +112,7 @@ public class HomeFragment extends Fragment implements
 
 	@Override
 	public void onItemClick(int index) {
+		mService.setTracks(mGenres.get(index).getTracks());
 		startActivity(getListTracksActivityIntent(getActivity(),
 			mGenres.get(index).getTracks(), index));
 	}
@@ -124,6 +133,10 @@ public class HomeFragment extends Fragment implements
 	public void showDialogFeatureTrack(int position) {
 	}
 
+	@Override
+	public void deleteFromFavorite(int position) {
+	}
+
 	public static HomeFragment newInstance() {
 		HomeFragment homeFragment = new HomeFragment();
 		return homeFragment;
@@ -136,6 +149,7 @@ public class HomeFragment extends Fragment implements
 	}
 
 	private void initView(View view) {
+		mButtonFavorite = view.findViewById(R.id.button_favorite);
 		mViewPager = view.findViewById(R.id.pager_images);
 		mTabLayout = view.findViewById(R.id.indicator);
 		mRecyclerView = view.findViewById(R.id.recycler_genres);
@@ -145,8 +159,9 @@ public class HomeFragment extends Fragment implements
 		sMiniMediaPlayer = new MiniMediaPlayer(mViewMiniMediaPlayer);
 		mAdapter = new TracksAdapter(this);
 		initImageSlide();
-		initGenreAdapter();
+		initData();
 		mImageSearch.setOnClickListener(this);
+		mButtonFavorite.setOnClickListener(this);
 	}
 
 	private void initImageSlide() {
@@ -156,13 +171,25 @@ public class HomeFragment extends Fragment implements
 		pageSwitcher(DURATION);
 	}
 
-	private void initGenreAdapter() {
+	private void initData() {
 		if (getArguments() != null) {
-			mGenres = getArguments().getParcelableArrayList(EXTRA_GENRES);
+			if (mTracks == null)
+				mTracks = getLocalTracks();
+			initGenreAdapter();
+		}
+	}
+
+	private void initGenreAdapter() {
+		mGenres = getArguments().getParcelableArrayList(EXTRA_GENRES);
+		if (mGenres != null) {
 			mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-			GenreAdapter genreAdapter = new GenreAdapter((ArrayList<Genre>) mGenres, this);
+			GenreAdapter genreAdapter = new GenreAdapter(mGenres, this);
 			mRecyclerView.setAdapter(genreAdapter);
 		}
+	}
+
+	private List<Track> getLocalTracks() {
+		return getArguments().getParcelableArrayList(EXTRA_TRACKS);
 	}
 
 	private void pageSwitcher(int time) {

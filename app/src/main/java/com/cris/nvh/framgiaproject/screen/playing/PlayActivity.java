@@ -47,8 +47,8 @@ public class PlayActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_play);
-		initView();
 		initHandler();
+		initView();
 		bindToService();
 	}
 
