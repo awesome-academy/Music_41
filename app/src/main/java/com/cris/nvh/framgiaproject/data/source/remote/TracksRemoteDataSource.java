@@ -16,18 +16,16 @@ public class TracksRemoteDataSource implements TracksDataSource.Remote {
 
 	@Override
 	public void getListGenres(String[] urls, TracksDataSource.LoadDataCallBack<Genre> callback) {
-		new LoadTracksAsyncTask(mContext, callback).execute(urls);
+		new LoadTracksAsyncTask(callback).execute(urls);
 	}
 
 	@Override
-	public void getOnlineTracks(Genre genre, int limit, int offSet,
-	                            TracksDataSource.LoadDataCallBack<Track> callback) {
-
+	public void getOnlineTracks(String url, TracksDataSource.LoadDataCallBack<Track> callback) {
 	}
 
 	@Override
 	public void searchTracks(String api, TracksDataSource.LoadDataCallBack<Track> callback) {
-
+		new SearchAsyncTask(callback).execute(api);
 	}
 
 	@Override

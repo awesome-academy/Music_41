@@ -14,7 +14,6 @@ import com.cris.nvh.framgiaproject.R;
 import com.cris.nvh.framgiaproject.data.model.Genre;
 import com.cris.nvh.framgiaproject.data.model.Track;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static android.support.v7.widget.LinearLayoutManager.HORIZONTAL;
@@ -45,8 +44,8 @@ public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.GenreViewHol
 	@Override
 	public GenreViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
 		View view = LayoutInflater
-				.from(viewGroup.getContext())
-				.inflate(R.layout.layout_genre, viewGroup, false);
+			.from(viewGroup.getContext())
+			.inflate(R.layout.layout_genre, viewGroup, false);
 		return new GenreViewHolder(view);
 	}
 
@@ -79,10 +78,10 @@ public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.GenreViewHol
 		public void bindData(Genre genre, GenreClickListener listener) {
 			setGenreText();
 			mRecyclerView.setAdapter(new ListTracksAdapter(genre.getTracks(),
-					listener, getAdapterPosition()));
+				listener, getAdapterPosition()));
 			mRecyclerView.setHasFixedSize(true);
 			mRecyclerView.setLayoutManager(new LinearLayoutManager(
-					itemView.getContext(), HORIZONTAL, false));
+				itemView.getContext(), HORIZONTAL, false));
 			mListener = listener;
 			itemView.setOnClickListener(this);
 		}
@@ -124,8 +123,8 @@ public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.GenreViewHol
 			@Override
 			public TrackViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
 				View view = LayoutInflater
-						.from(viewGroup.getContext())
-						.inflate(R.layout.layout_tracks, viewGroup, false);
+					.from(viewGroup.getContext())
+					.inflate(R.layout.layout_tracks, viewGroup, false);
 				return new TrackViewHolder(view);
 			}
 
@@ -158,19 +157,25 @@ public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.GenreViewHol
 					mListener = listener;
 					mGenreIndex = genreIndex;
 					itemView.setOnClickListener(this);
+					setTrackImage(track);
+				}
+
+				private void setTrackImage(Track track) {
 					track.setArtworkUrl(track.getArtworkUrl()
-							.replace(ARTWORK_DEFAULT_SIZE, ARTWORK_MAX_SIZE));
+						.replace(ARTWORK_DEFAULT_SIZE, ARTWORK_MAX_SIZE));
 					String imageUrl = track.getArtworkUrl();
 					if (!imageUrl.equals(NULL)) {
-						Glide.with(itemView)
-								.load(imageUrl)
-								.into(mImageView);
+						setImage(imageUrl);
 						return;
 					}
+					setImage(R.drawable.default_album);
+				}
+
+				private void setImage(Object data) {
 					Glide.with(itemView)
-							.load(R.drawable.default_artwork)
-							.apply(new RequestOptions().centerCrop())
-							.into(mImageView);
+						.load(data)
+						.apply(RequestOptions.circleCropTransform())
+						.into(mImageView);
 				}
 			}
 		}

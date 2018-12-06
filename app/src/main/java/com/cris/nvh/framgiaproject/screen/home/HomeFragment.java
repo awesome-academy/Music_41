@@ -37,6 +37,7 @@ import java.util.TimerTask;
 import static com.cris.nvh.framgiaproject.screen.favorite.FavoriteActivity.getFavoriteActivityIntent;
 import static com.cris.nvh.framgiaproject.screen.listtracks.ListTracksActivity.getListTracksActivityIntent;
 import static com.cris.nvh.framgiaproject.screen.playing.PlayActivity.getPlayActivityIntent;
+import static com.cris.nvh.framgiaproject.screen.search.SearchActivity.getSearchActivityIntent;
 import static com.cris.nvh.framgiaproject.screen.splash.SplashActivity.EXTRA_GENRES;
 import static com.cris.nvh.framgiaproject.screen.splash.SplashActivity.EXTRA_TRACKS;
 import static com.cris.nvh.framgiaproject.service.PlayMusicService.getMyServiceIntent;
@@ -140,12 +141,6 @@ public class HomeFragment extends Fragment implements
 	public static HomeFragment newInstance() {
 		HomeFragment homeFragment = new HomeFragment();
 		return homeFragment;
-	}
-
-	public static Intent getSearchActivityIntent(Context context, String value) {
-		Intent intent = new Intent(context, SearchActivity.class);
-		intent.putExtra(EXTRA_SEARCH, value);
-		return intent;
 	}
 
 	private void initView(View view) {

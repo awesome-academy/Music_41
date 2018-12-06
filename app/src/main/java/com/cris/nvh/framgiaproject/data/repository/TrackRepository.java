@@ -27,21 +27,28 @@ public class TrackRepository implements TracksDataSource.Local, TracksDataSource
 	}
 
 	@Override
-	public void getFavotiteTracks(TracksDataSource.LoadDataCallBack<Track> callback) {
+	public void getFavoriteTracks(TracksDataSource.LoadDataCallBack<Track> callback) {
+		mLocal.getFavoriteTracks(callback);
 	}
 
 	@Override
-	public void addFavoriteTrack(Track track, TracksDataSource.LoadDataCallBack<Boolean> callback) {
-
+	public void addFavoriteTrack(Track track, TracksDataSource.LoadDataCallBack<String> callback) {
+		mLocal.addFavoriteTrack(track, callback);
 	}
 
 	@Override
-	public void deleteFavoriteTrack(Track track, TracksDataSource.LoadDataCallBack<Boolean> callback) {
-
+	public void deleteFavoriteTrack(Track track, TracksDataSource.LoadDataCallBack<String> callback) {
+		mLocal.deleteFavoriteTrack(track, callback);
 	}
 
 	@Override
-	public void getRecentTrack(TracksDataSource.LoadDataCallBack<Long> callback) {
+	public boolean isAddedToFavorite(Track track) {
+		return mLocal.isAddedToFavorite(track);
+	}
+
+	@Override
+	public void getRecentTrack(TracksDataSource.LoadDataCallBack<Track> callback) {
+		mLocal.getRecentTrack(callback);
 	}
 
 	@Override
@@ -50,12 +57,12 @@ public class TrackRepository implements TracksDataSource.Local, TracksDataSource
 	}
 
 	@Override
-	public void getOnlineTracks(Genre genre, int limit, int offset, TracksDataSource.LoadDataCallBack<Track> callback) {
+	public void getOnlineTracks(String url, TracksDataSource.LoadDataCallBack<Track> callback) {
 	}
 
 	@Override
 	public void searchTracks(String api, TracksDataSource.LoadDataCallBack<Track> callback) {
-
+		mRemote.searchTracks(api, callback);
 	}
 
 	@Override
