@@ -105,6 +105,9 @@ public class PlayActivity extends AppCompatActivity {
 					case MediaRequest.SUCCESS:
 						mPlayFragment.loadingSuccess();
 						break;
+					case MediaRequest.UPDATE_MINI_PLAYER:
+						mNowPlayingFragment.updateNowPlaying();
+						break;
 					case MediaRequest.PAUSED:
 						mPlayFragment.getButtonChangeState().setImageResource(R.drawable.ic_play);
 						break;

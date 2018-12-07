@@ -41,7 +41,6 @@ public class MediaPlayerManager extends MediaPlayerSetting implements PlayMusic,
 	public void create(int index) {
 		mCurrentIndex = index;
 		Track track = mTracks.get(mCurrentIndex);
-		mListener.onStartLoading();
 		if (mMediaPlayer != null) {
 			mMediaPlayer.reset();
 			mState = StatusPlayerType.IDLE;
@@ -227,6 +226,7 @@ public class MediaPlayerManager extends MediaPlayerSetting implements PlayMusic,
 	private void initOffline(Track track) {
 		mMediaPlayer = MediaPlayer.create(mContext,
 			Uri.parse(track.getPermalinkUrl()));
+		mListener.onStartLoading();
 		mMediaPlayer.setOnCompletionListener(this);
 		start();
 		mListener.onChangeTrack();
@@ -236,6 +236,7 @@ public class MediaPlayerManager extends MediaPlayerSetting implements PlayMusic,
 		mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 		try {
 			mMediaPlayer.setDataSource(track.getStreamUrl());
+			mListener.onStartLoading();
 			mState = StatusPlayerType.INITIALIZED;
 			prepare();
 		} catch (IOException e) {

@@ -74,6 +74,10 @@ public class MyMusicFragment extends Fragment implements View.OnClickListener,
 	}
 
 	@Override
+	public void deleteFromFavorite(int position) {
+	}
+
+	@Override
 	public void clickItem(int position) {
 		startActivity(getListTracksActivityIntent(getActivity(), getLocalTracks(), LOCAL));
 	}

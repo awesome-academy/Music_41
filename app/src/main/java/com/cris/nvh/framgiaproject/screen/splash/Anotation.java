@@ -13,12 +13,12 @@ import java.lang.annotation.RetentionPolicy;
 public class Anotation {
 	@Retention(RetentionPolicy.SOURCE)
 	@StringDef({
-			ListGenres.ALL_MUSIC,
-			ListGenres.ALL_AUDIO,
-			ListGenres.ALTERNATIVE,
-			ListGenres.AMBIENT,
-			ListGenres.CLASSICAL,
-			ListGenres.COUNTRY
+		ListGenres.ALL_MUSIC,
+		ListGenres.ALL_AUDIO,
+		ListGenres.ALTERNATIVE,
+		ListGenres.AMBIENT,
+		ListGenres.CLASSICAL,
+		ListGenres.COUNTRY
 	})
 	@interface ListGenres {
 		String ALL_MUSIC = "genre=soundcloud:genres:all-music";

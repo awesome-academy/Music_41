@@ -1,9 +1,15 @@
 package com.cris.nvh.framgiaproject.screen.playing;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,19 +30,21 @@ import com.cris.nvh.framgiaproject.data.source.local.TracksLocalDataSource;
 import com.cris.nvh.framgiaproject.data.source.remote.TracksRemoteDataSource;
 import com.cris.nvh.framgiaproject.mediaplayer.MediaPlayerSetting;
 import com.cris.nvh.framgiaproject.mediaplayer.PlayMusic;
+import com.cris.nvh.framgiaproject.service.DownloadService;
 import com.cris.nvh.framgiaproject.service.PlayMusicService;
 
+import java.io.File;
 import java.util.concurrent.TimeUnit;
 
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static com.cris.nvh.framgiaproject.adapter.GenreAdapter.ARTWORK_DEFAULT_SIZE;
 import static com.cris.nvh.framgiaproject.adapter.GenreAdapter.ARTWORK_MAX_SIZE;
 import static com.cris.nvh.framgiaproject.screen.playing.PlayActivity.UPDATE_SEEKBAR;
 
 public class PlayFragment extends Fragment implements View.OnClickListener,
-	PlayContract.View, SeekBar.OnSeekBarChangeListener {
+	PlayContract.View, SeekBar.OnSeekBarChangeListener, DialogInterface.OnClickListener {
 	private static final int START_ANGLE = 0;
 	private static final int START_POSITION = 0;
-	private static final int REQUEST_PERMISSION = 10;
 	private static final int END_ANGLE = 360;
 	private static final int DURATION = 10000;
 	private static final float PIVOT = 0.5f;
@@ -46,11 +54,12 @@ public class PlayFragment extends Fragment implements View.OnClickListener,
 	private static final String TIME_FORMAT = "%02d:%02d";
 	private static final String PERMISSION = Manifest.permission.WRITE_EXTERNAL_STORAGE;
 	private static final long MESSAGE_UPDATE_DELAY = 1000;
+	private static final int REQUEST_CODE = 283;
 	private boolean mHasPermission;
 	private ImageView mImageAlbum;
 	private PlayMusicService mService;
 	private ImageView mButtonBack;
-	private ImageView mButtonMore;
+	private ImageView mButtonDownload;
 	private ImageView mButtonFavorite;
 	private TextView mTextSinger;
 	private TextView mTextSong;
@@ -104,6 +113,8 @@ public class PlayFragment extends Fragment implements View.OnClickListener,
 				getActivity().onBackPressed();
 				break;
 			case R.id.image_download:
+				checkPermission();
+				if (mHasPermission && isAcceptDownload(mTrack.getTitle())) beginDownload();
 				break;
 			case R.id.image_loop:
 				changeLoopType();
@@ -144,6 +155,36 @@ public class PlayFragment extends Fragment implements View.OnClickListener,
 
 	@Override
 	public void onStopTrackingTouch(SeekBar seekBar) {
+	}
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, String[] permissions,
+	                                       int[] grantResults) {
+		switch (requestCode) {
+			case REQUEST_CODE:
+				if (grantResults.length > 0
+					&& grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+					mHasPermission = true;
+				} else checkPermission();
+				break;
+			default:
+				break;
+		}
+	}
+
+	@Override
+	public void onClick(DialogInterface dialogInterface, int button) {
+		switch (button) {
+			case DialogInterface.BUTTON_POSITIVE:
+				beginDownload();
+				dialogInterface.dismiss();
+				break;
+			case DialogInterface.BUTTON_NEGATIVE:
+				dialogInterface.dismiss();
+				break;
+			default:
+				break;
+		}
 	}
 
 	public void setHandler(Handler handler) {
@@ -195,7 +236,7 @@ public class PlayFragment extends Fragment implements View.OnClickListener,
 	private void initView(View view) {
 		mHasPermission = false;
 		mButtonBack = view.findViewById(R.id.image_back_button);
-		mButtonMore = view.findViewById(R.id.image_download);
+		mButtonDownload = view.findViewById(R.id.image_download);
 		mButtonFavorite = view.findViewById(R.id.image_favorite);
 		mTextSinger = view.findViewById(R.id.text_singer_name);
 		mTextSong = view.findViewById(R.id.text_song_name);
@@ -211,6 +252,40 @@ public class PlayFragment extends Fragment implements View.OnClickListener,
 		mTextSong.setSelected(true);
 		mTextSinger.setSelected(true);
 		setListener();
+	}
+
+	private boolean isAcceptDownload(String title) {
+		String fileName = new StringBuilder()
+			.append(ROOT_FOLDER)
+			.append(title)
+			.append(MP3_FORMAT)
+			.toString();
+		File file = new File(fileName);
+		if (!file.isDirectory() && file.exists()) {
+			confirmDownload();
+			return false;
+		}
+		return true;
+	}
+
+	private void confirmDownload() {
+		AlertDialog dialog = new AlertDialog.Builder(getActivity())
+			.setTitle(R.string.notify_file_exists)
+			.setIcon(R.drawable.ic_download)
+			.setPositiveButton(R.string.confirm_yes, this)
+			.setNegativeButton(R.string.confirm_no, this)
+			.create();
+		dialog.show();
+	}
+
+	private void checkPermission() {
+		if (ContextCompat
+			.checkSelfPermission(getActivity(), PERMISSION) != PERMISSION_GRANTED) {
+			ActivityCompat.requestPermissions(getActivity(),
+				new String[]{PERMISSION}, REQUEST_CODE);
+			return;
+		}
+		mHasPermission = true;
 	}
 
 	private void setImageAlbum(String source) {
@@ -245,7 +320,7 @@ public class PlayFragment extends Fragment implements View.OnClickListener,
 		mButtonBack.setOnClickListener(this);
 		mButtonFavorite.setOnClickListener(this);
 		mSeekBar.setOnSeekBarChangeListener(this);
-		mButtonMore.setOnClickListener(this);
+		mButtonDownload.setOnClickListener(this);
 	}
 
 	private void updateUI() {
@@ -363,6 +438,11 @@ public class PlayFragment extends Fragment implements View.OnClickListener,
 			default:
 				break;
 		}
+	}
+
+	private void beginDownload() {
+		Intent intent = DownloadService.getDownloadIntent(getContext(), mTrack);
+		getActivity().startService(intent);
 	}
 
 	private String convertMilisecondToFormatTime(long msec) {
