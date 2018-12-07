@@ -3,6 +3,7 @@ package com.cris.nvh.framgiaproject.screen.playing;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import com.cris.nvh.framgiaproject.adapter.TracksAdapter;
 import com.cris.nvh.framgiaproject.data.model.Track;
 import com.cris.nvh.framgiaproject.service.PlayMusicService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -44,6 +46,18 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
 	}
 
 	@Override
+	public void onResume() {
+		super.onResume();
+		if (mService != null) {
+			mTracks = mService.getTracks();
+			mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+			mTracksAdapter = new TracksAdapter(mTracks, this);
+			mRecyclerView.setAdapter(mTracksAdapter);
+			mTracksAdapter.setCurrentTrack(mService.getTrack());
+		}
+	}
+
+	@Override
 	public void onClick(View view) {
 		switch (view.getId()) {
 			case R.id.image_back_button:
@@ -56,12 +70,16 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
 
 	@Override
 	public void clickItemTrackListener(int position) {
-
+		mService.createTrack(position);
+		mTracksAdapter.setCurrentTrack(position);
 	}
 
 	@Override
 	public void showDialogFeatureTrack(int position) {
+	}
 
+	@Override
+	public void deleteFromFavorite(int position) {
 	}
 
 	public void setService(PlayMusicService service) {
@@ -69,6 +87,7 @@ public class NowPlayingFragment extends Fragment implements View.OnClickListener
 	}
 
 	public void updateNowPlaying() {
+		mTracksAdapter.setCurrentTrack(mService.getTrack());
 	}
 
 	private void initView(View view) {

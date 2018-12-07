@@ -14,7 +14,7 @@ import java.util.ArrayList;
  */
 
 public interface SplashContract {
-	interface View{
+	interface View {
 		public void onLoadApiFailed(String message);
 
 		public void onLoadLocalTrackFailed(String message);
@@ -24,7 +24,7 @@ public interface SplashContract {
 		public void onLoadLocalTrackSuccess(ArrayList<Track> tracks);
 	}
 
-	interface Presenter{
+	interface Presenter {
 		public void initRepository(TrackRepository trackRepository);
 
 		public void loadApiData(String[] urls);

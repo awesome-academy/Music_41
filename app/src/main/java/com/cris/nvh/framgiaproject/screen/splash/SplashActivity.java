@@ -37,9 +37,9 @@ import static com.cris.nvh.framgiaproject.Constants.PARAMETER_LIMIT;
 public class SplashActivity extends AppCompatActivity implements SplashContract.View {
 	public static final String ACTION_LOAD_API = "ACTION_LOAD_API";
 	public static final String EXTRA_TRACKS =
-			"com.cris.nvh.framgiaproject.screen.splash.EXTRA_TRACKS";
+		"com.cris.nvh.framgiaproject.screen.splash.EXTRA_TRACKS";
 	public static final String EXTRA_GENRES =
-			"com.cris.nvh.framgiaproject.screen.splash.EXTRA_GENRES";
+		"com.cris.nvh.framgiaproject.screen.splash.EXTRA_GENRES";
 	private static final int REQUEST_CODE = 10;
 	private static final String PERMISSION = Manifest.permission.READ_EXTERNAL_STORAGE;
 	private SplashContract.Presenter mSplashPresenter;
@@ -49,10 +49,6 @@ public class SplashActivity extends AppCompatActivity implements SplashContract.
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_splash);
 		requestPermission();
-		mSplashPresenter = new SplashPresenter(this);
-		mSplashPresenter.initRepository(TrackRepository
-				.getInstance(TracksLocalDataSource.getInstance(this), TracksRemoteDataSource.getInstance(this)));
-		loadData();
 	}
 
 	@Override
@@ -61,6 +57,7 @@ public class SplashActivity extends AppCompatActivity implements SplashContract.
 		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 		if (requestCode == REQUEST_CODE) {
 			if (grantResults.length > 0 && grantResults[0] == PERMISSION_GRANTED) {
+				loadData();
 			} else {
 				Toast.makeText(this, R.string.permisson_not_granted, Toast.LENGTH_SHORT).show();
 			}
@@ -85,8 +82,9 @@ public class SplashActivity extends AppCompatActivity implements SplashContract.
 	@Override
 	public void onloadApiSuccess(ArrayList<Genre> genres) {
 		Intent intent = new Intent(ACTION_LOAD_API)
-				.putExtra(EXTRA_GENRES, genres);
+			.putExtra(EXTRA_GENRES, genres);
 		LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+		finish();
 	}
 
 	public static Intent getIntent(Context context, ArrayList<Track> tracks) {
@@ -96,11 +94,18 @@ public class SplashActivity extends AppCompatActivity implements SplashContract.
 	}
 
 	private void requestPermission() {
-		if (ContextCompat.checkSelfPermission(this, PERMISSION) != PERMISSION_GRANTED)
+		if (ContextCompat.checkSelfPermission(this, PERMISSION) != PERMISSION_GRANTED) {
 			ActivityCompat.requestPermissions(this, new String[]{PERMISSION}, REQUEST_CODE);
+			return;
+		}
+		loadData();
 	}
 
 	private void loadData() {
+		mSplashPresenter = new SplashPresenter(this);
+		mSplashPresenter.initRepository(TrackRepository
+			.getInstance(TracksLocalDataSource.getInstance(this),
+				TracksRemoteDataSource.getInstance(this)));
 		if (isNetworkConnected()) {
 			String[] urls = generateApiUrl();
 			mSplashPresenter.loadApiData(urls);
@@ -112,8 +117,8 @@ public class SplashActivity extends AppCompatActivity implements SplashContract.
 
 	private String[] generateApiUrl() {
 		String[] genres = {Anotation.ListGenres.ALL_MUSIC, Anotation.ListGenres.ALL_AUDIO,
-				Anotation.ListGenres.ALTERNATIVE, Anotation.ListGenres.AMBIENT,
-				Anotation.ListGenres.CLASSICAL, Anotation.ListGenres.COUNTRY
+			Anotation.ListGenres.ALTERNATIVE, Anotation.ListGenres.AMBIENT,
+			Anotation.ListGenres.CLASSICAL, Anotation.ListGenres.COUNTRY
 		};
 		String[] urls = initGenres(genres);
 		return urls;
@@ -123,17 +128,17 @@ public class SplashActivity extends AppCompatActivity implements SplashContract.
 		String[] urls = new String[genres.length];
 		for (int i = 0; i < genres.length; i++) {
 			urls[i] = new StringBuffer()
-					.append(BASE_URL_GENRES).append(genres[i])
-					.append(CLIENT_ID).append(BuildConfig.API_KEY)
-					.append(PARAMETER_LIMIT).append(LIMIT)
-					.toString();
+				.append(BASE_URL_GENRES).append(genres[i])
+				.append(CLIENT_ID).append(BuildConfig.API_KEY)
+				.append(PARAMETER_LIMIT).append(LIMIT)
+				.toString();
 		}
 		return urls;
 	}
 
 	private boolean isNetworkConnected() {
 		ConnectivityManager connectivityManager = (ConnectivityManager)
-				getSystemService(Context.CONNECTIVITY_SERVICE);
+			getSystemService(Context.CONNECTIVITY_SERVICE);
 		return connectivityManager.getActiveNetworkInfo() == null ? false : true;
 	}
 }

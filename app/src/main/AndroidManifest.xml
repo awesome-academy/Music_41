@@ -31,6 +31,7 @@
         <activity android:name=".screen.favorite.FavoriteActivity" />
 
         <service android:name=".service.PlayMusicService" />
+        <service android:name=".service.DownloadService" />
     </application>
 
 </manifest>
