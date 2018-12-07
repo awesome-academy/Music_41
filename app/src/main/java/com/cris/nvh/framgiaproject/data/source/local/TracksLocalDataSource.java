@@ -29,7 +29,7 @@ public class TracksLocalDataSource implements TracksDataSource.Local {
 
 	@Override
 	public void addFavoriteTrack(Track track, TracksDataSource.LoadDataCallBack<String> callback) {
-		mFavoriteDbManager.putTrack(track, callback);
+		mFavoriteDbManager.insertTrack(track, callback);
 	}
 
 	@Override

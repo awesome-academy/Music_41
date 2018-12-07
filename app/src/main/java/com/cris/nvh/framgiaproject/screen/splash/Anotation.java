@@ -20,7 +20,7 @@ public class Anotation {
 		ListGenres.CLASSICAL,
 		ListGenres.COUNTRY
 	})
-	@interface ListGenres {
+	public @interface ListGenres {
 		String ALL_MUSIC = "genre=soundcloud:genres:all-music";
 		String ALL_AUDIO = "genre=soundcloud:genres:all-audio";
 		String ALTERNATIVE = "genre=soundcloud:genres:alternativerock";

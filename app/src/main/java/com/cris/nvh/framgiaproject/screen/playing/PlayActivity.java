@@ -99,8 +99,10 @@ public class PlayActivity extends AppCompatActivity {
 				super.handleMessage(msg);
 				switch (msg.what) {
 					case MediaRequest.LOADING:
-						mPlayFragment.startLoading();
-						mNowPlayingFragment.updateNowPlaying();
+						if (!isDestroyed()) {
+							mPlayFragment.startLoading();
+							mNowPlayingFragment.updateNowPlaying();
+						}
 						break;
 					case MediaRequest.SUCCESS:
 						mPlayFragment.loadingSuccess();

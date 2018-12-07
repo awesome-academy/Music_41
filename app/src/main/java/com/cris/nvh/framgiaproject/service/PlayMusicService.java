@@ -1,5 +1,6 @@
 package com.cris.nvh.framgiaproject.service;
 
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -9,9 +10,14 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
+import android.widget.RemoteViews;
 
+import com.cris.nvh.framgiaproject.R;
 import com.cris.nvh.framgiaproject.data.model.Track;
 import com.cris.nvh.framgiaproject.mediaplayer.MediaPlayerManager;
+import com.cris.nvh.framgiaproject.screen.playing.PlayActivity;
 
 import java.io.Serializable;
 import java.util.List;
@@ -39,11 +45,18 @@ public class PlayMusicService extends Service implements IService, Serializable,
 	private static final int VALUE_NEXT_SONG = 4;
 	private static final int VALUE_PREVIOUS_SONG = 5;
 	private static final int VALUE_PLAY_SONG = 2;
+	private static final int NOTIFICATION_ID = 283;
+	private static final int REQUEST_CODE = 0;
 	private static Handler mUIHandler;
 	private final IBinder mBinder = new LocalBinder();
 	private Looper mServiceLooper;
 	private ServiceHandler mServiceHandler;
 	private MediaPlayerManager mMediaPlayerManager;
+	private RemoteViews mNotificationLayout;
+	private NotificationCompat.Builder mBuilder;
+	private PendingIntent mNextPendingIntent;
+	private PendingIntent mPreviousPendingIntent;
+	private PendingIntent mPlayPendingIntent;
 
 	@Override
 	public void onCreate() {
@@ -83,6 +96,17 @@ public class PlayMusicService extends Service implements IService, Serializable,
 			}
 		}
 		return START_STICKY;
+	}
+
+	@Override
+	public boolean onUnbind(Intent intent) {
+		return true;
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		mMediaPlayerManager.setMediaPlayer(null);
 	}
 
 	@Override
@@ -156,9 +180,9 @@ public class PlayMusicService extends Service implements IService, Serializable,
 
 	@Override
 	public void onStartLoading() {
-		if (mUIHandler != null) {
-			mUIHandler.sendEmptyMessage(LOADING);
-		}
+		if (mBuilder == null) createNotification();
+		else updateNotification(getTrack());
+		if (mUIHandler != null) mUIHandler.sendEmptyMessage(LOADING);
 	}
 
 	@Override
@@ -171,16 +195,19 @@ public class PlayMusicService extends Service implements IService, Serializable,
 
 	@Override
 	public void onLoadingSuccess() {
+		updateNotification();
 		mUIHandler.sendEmptyMessage(SUCCESS);
 	}
 
 	@Override
 	public void onTrackPaused() {
+		updateNotification();
 		mUIHandler.sendEmptyMessage(PAUSED);
 	}
 
 	@Override
 	public void onTrackStopped() {
+		updateNotification();
 		mUIHandler.sendEmptyMessage(STOPPED);
 	}
 
@@ -235,11 +262,103 @@ public class PlayMusicService extends Service implements IService, Serializable,
 		return mMediaPlayerManager;
 	}
 
-	public void sendMessage(int request, int index) {
+	private void sendMessage(int request, int index) {
 		Message message = new Message();
 		message.what = request;
 		message.arg1 = index;
 		mServiceHandler.sendMessage(message);
+	}
+
+	private void createNotification() {
+		mBuilder = new NotificationCompat.Builder(this)
+			.setSmallIcon(R.drawable.default_album)
+			.setStyle(new NotificationCompat.DecoratedCustomViewStyle());
+		Intent nextIntent = new Intent(this, PlayActivity.class);
+		TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+		stackBuilder.addNextIntentWithParentStack(nextIntent);
+		PendingIntent resultPenddingIntent = stackBuilder
+			.getPendingIntent(REQUEST_CODE, PendingIntent.FLAG_UPDATE_CURRENT);
+		mBuilder.setContentIntent(resultPenddingIntent);
+		initLayoutNotification(getTrack());
+		startForeground(NOTIFICATION_ID, mBuilder.build());
+		createPendingIntent();
+	}
+
+	public void createPendingIntent() {
+		createNextPendingIntent();
+		createPreviousPendingIntent();
+		createPlayPendingIntent();
+	}
+
+	private void initLayoutNotification(int index) {
+		Track track = getTracks().get(index);
+		mNotificationLayout = new RemoteViews(getPackageName(), R.layout.layout_notification);
+		mNotificationLayout.setTextViewText(R.id.text_song_name, track.getTitle());
+		mNotificationLayout.setImageViewResource(R.id.image_play, R.drawable.ic_pause);
+	}
+
+	private void updateNotification(int index) {
+		Track track = getTracks().get(index);
+		mNotificationLayout.setTextViewText(R.id.text_song_name, track.getTitle());
+		if (isPlaying()) {
+			mNotificationLayout.setImageViewResource(R.id.image_play, R.drawable.ic_pause);
+			mBuilder.setOngoing(false);
+		} else {
+			mNotificationLayout.setImageViewResource(R.id.image_play, R.drawable.ic_play);
+			mBuilder.setOngoing(true);
+		}
+		mBuilder.setContent(mNotificationLayout);
+		startForeground(NOTIFICATION_ID, mBuilder.build());
+	}
+
+	private void updateNotification() {
+		if (!isPlaying()) {
+			mNotificationLayout.setImageViewResource(R.id.image_play, R.drawable.ic_play);
+			mBuilder.setOngoing(false);
+			mBuilder.setContent(mNotificationLayout);
+			startForeground(NOTIFICATION_ID, mBuilder.build());
+			stopForeground(true);
+			return;
+		}
+		mNotificationLayout.setImageViewResource(R.id.image_play, R.drawable.ic_pause);
+		mBuilder.setContent(mNotificationLayout);
+		startForeground(NOTIFICATION_ID, mBuilder.build());
+	}
+
+	private void createNextPendingIntent() {
+		sendPendingIntent(VALUE_NEXT_SONG);
+		mNotificationLayout.setOnClickPendingIntent(R.id.image_next, mNextPendingIntent);
+	}
+
+	private void createPreviousPendingIntent() {
+		sendPendingIntent(VALUE_PREVIOUS_SONG);
+		mNotificationLayout.setOnClickPendingIntent(R.id.image_previous, mPreviousPendingIntent);
+	}
+
+	private void createPlayPendingIntent() {
+		sendPendingIntent(VALUE_PLAY_SONG);
+		mNotificationLayout.setOnClickPendingIntent(R.id.image_play, mPlayPendingIntent);
+	}
+
+	private void sendPendingIntent(int requestValue) {
+		Intent intent = new Intent(getApplicationContext(), PlayMusicService.class);
+		intent.putExtra(EXTRA_REQUEST_CODE, requestValue);
+		switch (requestValue) {
+			case VALUE_NEXT_SONG:
+				mNextPendingIntent = PendingIntent.getService(getApplicationContext(),
+					requestValue, intent, 0);
+				break;
+			case VALUE_PREVIOUS_SONG:
+				mPreviousPendingIntent = PendingIntent.getService(getApplicationContext(),
+					requestValue, intent, 0);
+				break;
+			case VALUE_PLAY_SONG:
+				mPlayPendingIntent = PendingIntent.getService(getApplicationContext(),
+					requestValue, intent, 0);
+				break;
+			default:
+				break;
+		}
 	}
 
 	public class LocalBinder extends Binder {
