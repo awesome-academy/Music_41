@@ -63,7 +63,7 @@ public class LocalTracksManager {
 			return;
 		}
 		while (cursor.moveToNext()) {
-			tracks.add(initLocalSong(cursor));
+			tracks.add(initLocalTrack(cursor));
 		}
 		cursor.close();
 		callback.onSuccess(tracks);
@@ -93,7 +93,7 @@ public class LocalTracksManager {
 	}
 
 
-	private Track initLocalSong(Cursor cursor) {
+	private Track initLocalTrack(Cursor cursor) {
 		int idIndex = cursor.getColumnIndex(MediaStore.Audio.Media._ID);
 		int artistIndex = cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
 		int titleIndex = cursor.getColumnIndex(MediaStore.Audio.Media.TITLE);

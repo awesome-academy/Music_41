@@ -1,5 +1,6 @@
 package com.cris.nvh.framgiaproject.adapter;
 
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,12 +18,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.MyViewHolder> {
+	private int mCurrentTrack;
 	private List<Track> mTracks;
 	private OnClickItemTrackListener mListener;
 	private boolean mIsNowPlaying;
 	private boolean mIsRecentTracks;
 	private boolean mIsFavorite;
-	private OnClickDeleteListener mDeleteListener;
 
 	public TracksAdapter(OnClickItemTrackListener listener) {
 		mTracks = new ArrayList<>();
@@ -32,13 +33,6 @@ public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.MyViewHold
 	public TracksAdapter(List<Track> tracks, OnClickItemTrackListener listener) {
 		mTracks = tracks;
 		mListener = listener;
-	}
-
-	public TracksAdapter(List<Track> tracks, OnClickItemTrackListener trackListener,
-	                     OnClickDeleteListener deleteListener) {
-		mTracks = tracks;
-		mDeleteListener = deleteListener;
-		mListener = trackListener;
 	}
 
 	@Override
@@ -51,6 +45,11 @@ public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.MyViewHold
 	@Override
 	public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int i) {
 		myViewHolder.bindData(mTracks.get(i), mListener);
+		if (i == mCurrentTrack) {
+			myViewHolder.setNowPlayingBackground();
+			return;
+		}
+		myViewHolder.setDefaultTrackBackground();
 	}
 
 	@Override
@@ -68,9 +67,29 @@ public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.MyViewHold
 		return this;
 	}
 
-	public TracksAdapter setFavarite(boolean favarite) {
+	public TracksAdapter setFavorite(boolean favarite) {
 		mIsFavorite = favarite;
 		return this;
+	}
+
+	public void updateTracks(List<Track> tracks) {
+		if (tracks != null) {
+			mTracks.clear();
+			mTracks.addAll(tracks);
+			notifyDataSetChanged();
+		}
+	}
+
+	public void addTracks(List<Track> tracks) {
+		if (tracks != null) {
+			mTracks.addAll(tracks);
+			notifyDataSetChanged();
+		}
+	}
+
+	public void setCurrentTrack(int index) {
+		mCurrentTrack = index;
+		notifyDataSetChanged();
 	}
 
 	public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -88,26 +107,12 @@ public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.MyViewHold
 			mFeature = itemView.findViewById(R.id.image_feature);
 		}
 
-		private void updateItem() {
-			itemView.setBackgroundColor(itemView.getResources()
-				.getColor(R.color.color_black));
-		}
-
-		public void bindData(Track track,
-		                     final OnClickItemTrackListener listener) {
-			mTrackName.setText(track.getTitle());
-			mSingerName.setText(track.getArtist());
-			setImage(mTrackImage, track.getArtworkUrl());
-			mListener = listener;
-			itemView.setOnClickListener(this);
-			mFeature.setOnClickListener(this);
-		}
-
 		@Override
 		public void onClick(View view) {
 			switch (view.getId()) {
 				case R.id.image_feature:
-					mListener.showDialogFeatureTrack(getAdapterPosition());
+					if (mIsFavorite) mListener.deleteFromFavorite(getAdapterPosition());
+					else mListener.showDialogFeatureTrack(getAdapterPosition());
 					break;
 				default:
 					mListener.clickItemTrackListener(getAdapterPosition());
@@ -115,7 +120,26 @@ public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.MyViewHold
 			}
 		}
 
-		public void setImage(ImageView image, String source) {
+		public void setNowPlayingBackground() {
+			itemView.setBackgroundResource(R.color.color_gray);
+		}
+
+		public void setDefaultTrackBackground() {
+			itemView.setBackgroundColor(Color.TRANSPARENT);
+		}
+
+		public void bindData(Track track,
+		                     final OnClickItemTrackListener listener) {
+			mTrackName.setText(track.getTitle());
+			mSingerName.setText(track.getArtist());
+			setImage(mTrackImage, track.getArtworkUrl());
+			if (mIsFavorite) mFeature.setImageResource(R.drawable.like);
+			mListener = listener;
+			itemView.setOnClickListener(this);
+			mFeature.setOnClickListener(this);
+		}
+
+		private void setImage(ImageView image, String source) {
 			RequestOptions requestOptions = new RequestOptions();
 			requestOptions.error(R.drawable.default_album);
 			Glide.with(image.getContext())
@@ -129,9 +153,7 @@ public class TracksAdapter extends RecyclerView.Adapter<TracksAdapter.MyViewHold
 		void clickItemTrackListener(int position);
 
 		void showDialogFeatureTrack(int position);
-	}
 
-	public interface OnClickDeleteListener {
 		void deleteFromFavorite(int position);
 	}
 }

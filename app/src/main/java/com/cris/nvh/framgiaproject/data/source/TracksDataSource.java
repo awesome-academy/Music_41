@@ -15,19 +15,21 @@ public interface TracksDataSource {
 	interface Local {
 		void getLocalTracks(LoadDataCallBack<Track> callback);
 
-		void getFavotiteTracks(LoadDataCallBack<Track> callback);
+		void getFavoriteTracks(LoadDataCallBack<Track> callback);
 
-		void addFavoriteTrack(Track track, LoadDataCallBack<Boolean> callback);
+		boolean isAddedToFavorite(Track track);
 
-		void deleteFavoriteTrack(Track track, LoadDataCallBack<Boolean> callback);
+		void addFavoriteTrack(Track track, LoadDataCallBack<String> callback);
 
-		void getRecentTrack(LoadDataCallBack<Long> callback);
+		void deleteFavoriteTrack(Track track, LoadDataCallBack<String> callback);
+
+		void getRecentTrack(LoadDataCallBack<Track> callback);
 	}
 
 	interface Remote {
 		void getListGenres(String[] urls, LoadDataCallBack<Genre> callback);
 
-		void getOnlineTracks(Genre genre, int limit, int offset, LoadDataCallBack<Track> callback);
+		void getOnlineTracks(String url, LoadDataCallBack<Track> callback);
 
 		void searchTracks(String api, LoadDataCallBack<Track> callback);
 

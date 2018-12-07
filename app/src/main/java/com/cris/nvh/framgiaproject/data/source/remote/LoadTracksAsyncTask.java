@@ -1,10 +1,8 @@
 package com.cris.nvh.framgiaproject.data.source.remote;
 
-import android.content.Context;
 import android.os.AsyncTask;
 
 import com.cris.nvh.framgiaproject.BuildConfig;
-import com.cris.nvh.framgiaproject.R;
 import com.cris.nvh.framgiaproject.data.model.Genre;
 import com.cris.nvh.framgiaproject.data.model.Track;
 import com.cris.nvh.framgiaproject.data.source.TracksDataSource;
@@ -20,12 +18,13 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.cris.nvh.framgiaproject.Constants.BASE_URL_TRACK;
 import static com.cris.nvh.framgiaproject.Constants.NAME_STREAM;
 import static com.cris.nvh.framgiaproject.Constants.PARAMETER_ID;
 
-public class LoadTracksAsyncTask extends AsyncTask<String[], Integer, ArrayList<Genre>> {
+public class LoadTracksAsyncTask extends AsyncTask<String[], String, List<Genre>> {
 	private TracksDataSource.LoadDataCallBack<Genre> mCallback;
 	private static final String ARTWORK_URL = "artwork_url";
 	private static final String ID = "id";
@@ -42,26 +41,35 @@ public class LoadTracksAsyncTask extends AsyncTask<String[], Integer, ArrayList<
 	private static final String REQUEST_METHOD = "GET";
 	private static final int CONNECT_TIMEOUT = 15000;
 	private static final int READ_TIMEOUT = 10000;
-	private Context mContext;
 
-	public LoadTracksAsyncTask(Context context, TracksDataSource.LoadDataCallBack<Genre> callback) {
-		mContext = context;
+	public LoadTracksAsyncTask(TracksDataSource.LoadDataCallBack<Genre> callback) {
 		mCallback = callback;
 	}
 
 	@Override
-	protected ArrayList<Genre> doInBackground(String[]... strings) {
-		ArrayList<Genre> genres = new ArrayList<>();
-		for (int i = 0; i < strings[0].length; i++) {
-			String jsonString = getJsonStringData((strings[0][i]));
-			genres.add(convertJsonToObject(jsonString));
+	protected List<Genre> doInBackground(String[]... strings) {
+		List<Genre> genres = new ArrayList<>();
+		if (strings[0][1] != null) {
+			for (int i = 0; i < strings[0].length; i++) {
+				String jsonString = getJsonStringData((strings[0][i]));
+				genres.add(convertJsonToObject(jsonString));
+			}
+			return genres;
 		}
+		String jsonString = getJsonStringData((strings[0][0]));
+		genres.add(convertJsonToObject(jsonString));
 		return genres;
 	}
 
 	@Override
-	protected void onPostExecute(ArrayList<Genre> genres) {
+	protected void onPostExecute(List<Genre> genres) {
 		mCallback.onSuccess(genres);
+	}
+
+	@Override
+	protected void onProgressUpdate(String... values) {
+		super.onProgressUpdate(values);
+		mCallback.onFail(values[0]);
 	}
 
 	private String getJsonStringData(String stringUrl) {
@@ -83,9 +91,9 @@ public class LoadTracksAsyncTask extends AsyncTask<String[], Integer, ArrayList<
 			bufferedReader.close();
 			connection.disconnect();
 		} catch (MalformedURLException e) {
-			mCallback.onFail(mContext.getString(R.string.get_json_string_failed));
+			publishProgress(e.getMessage());
 		} catch (IOException e) {
-			mCallback.onFail(mContext.getString(R.string.get_json_string_failed));
+			publishProgress(e.getMessage());
 		}
 		return builder.toString();
 	}
@@ -95,7 +103,7 @@ public class LoadTracksAsyncTask extends AsyncTask<String[], Integer, ArrayList<
 			JSONObject jsonObject = new JSONObject(jsonString);
 			return initGenre(jsonObject);
 		} catch (JSONException e) {
-			mCallback.onFail(mContext.getString(R.string.json_to_object_failed));
+			publishProgress(e.getMessage());
 		}
 		return null;
 	}
@@ -112,7 +120,7 @@ public class LoadTracksAsyncTask extends AsyncTask<String[], Integer, ArrayList<
 			genre.setTracks(tracks);
 			return genre;
 		} catch (JSONException e) {
-			mCallback.onFail(mContext.getString(R.string.json_to_object_failed));
+			publishProgress(e.getMessage());
 		}
 		return null;
 	}
@@ -129,11 +137,21 @@ public class LoadTracksAsyncTask extends AsyncTask<String[], Integer, ArrayList<
 			track.setDuration(jsonTrack.getInt(DURATION));
 			track.setArtist(jsonTrack.getJSONObject(KEY_USER).getString(ARTIST_NAME));
 			track.setArtistImage(jsonTrack.getJSONObject(KEY_USER).getString(ARTIST_IMAGE));
-			track.setStreamUrl(BASE_URL_TRACK + track.getId() + NAME_STREAM + PARAMETER_ID + BuildConfig.API_KEY);
+			track.setStreamUrl(initStreamUrl(jsonTrack.getInt(ID)));
 			return track;
 		} catch (JSONException e) {
-			mCallback.onFail(mContext.getString(R.string.json_to_object_failed));
+			publishProgress(e.getMessage());
 		}
 		return null;
+	}
+
+	private String initStreamUrl(int id) {
+		return new StringBuilder()
+			.append(BASE_URL_TRACK)
+			.append(Integer.valueOf(id))
+			.append(NAME_STREAM)
+			.append(PARAMETER_ID)
+			.append(BuildConfig.API_KEY)
+			.toString();
 	}
 }
