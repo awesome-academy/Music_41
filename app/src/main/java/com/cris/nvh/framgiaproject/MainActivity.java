@@ -184,8 +184,10 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 					case FAILURE:
 						break;
 					case PAUSED:
+						HomeFragment.sMiniMediaPlayer.setPlayButton();
 						break;
 					case STOPPED:
+						HomeFragment.sMiniMediaPlayer.setPlayButton();
 						break;
 					case UPDATE_MINI_PLAYER:
 						HomeFragment.sMiniMediaPlayer.update();
@@ -210,6 +212,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 				PlayMusicService.LocalBinder binder = (PlayMusicService.LocalBinder) iBinder;
 				mService = binder.getService();
 				mService.setUIHandler(mHandler);
+				mService.setTracks(mTracks);
 			}
 
 			@Override

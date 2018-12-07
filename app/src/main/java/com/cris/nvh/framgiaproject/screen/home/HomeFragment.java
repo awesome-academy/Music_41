@@ -3,7 +3,6 @@ package com.cris.nvh.framgiaproject.screen.home;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -26,10 +25,8 @@ import com.cris.nvh.framgiaproject.adapter.TracksAdapter;
 import com.cris.nvh.framgiaproject.adapter.TracksSlideAdapter;
 import com.cris.nvh.framgiaproject.data.model.Genre;
 import com.cris.nvh.framgiaproject.data.model.Track;
-import com.cris.nvh.framgiaproject.screen.search.SearchActivity;
 import com.cris.nvh.framgiaproject.service.PlayMusicService;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -50,8 +47,6 @@ import static com.cris.nvh.framgiaproject.service.PlayMusicService.getMyServiceI
 public class HomeFragment extends Fragment implements
 	GenreAdapter.GenreClickListener, View.OnClickListener,
 	TracksAdapter.OnClickItemTrackListener {
-	public static final String EXTRA_SEARCH =
-		"com.cris.nvh.framgiaproject.screen.home.EXTRA_SEARCH";
 	private static final int DURATION = 8000;
 	private static final int FIRST_PAGE = 0;
 	private static final int PLUS = 1;
@@ -90,6 +85,15 @@ public class HomeFragment extends Fragment implements
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		if (mService != null) {
+			sMiniMediaPlayer.setService(mService);
+			sMiniMediaPlayer.update();
+		}
 	}
 
 	@Override
@@ -168,8 +172,6 @@ public class HomeFragment extends Fragment implements
 
 	private void initData() {
 		if (getArguments() != null) {
-			if (mTracks == null)
-				mTracks = getLocalTracks();
 			initGenreAdapter();
 		}
 	}
@@ -177,8 +179,8 @@ public class HomeFragment extends Fragment implements
 	private void initGenreAdapter() {
 		mGenres = getArguments().getParcelableArrayList(EXTRA_GENRES);
 		if (mGenres != null) {
-			mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 			GenreAdapter genreAdapter = new GenreAdapter(mGenres, this);
+			mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 			mRecyclerView.setAdapter(genreAdapter);
 		}
 	}

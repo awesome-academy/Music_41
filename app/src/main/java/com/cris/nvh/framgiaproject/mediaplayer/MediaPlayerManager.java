@@ -98,7 +98,7 @@ public class MediaPlayerManager extends MediaPlayerSetting implements PlayMusic,
 
 	@Override
 	public int getDuration() {
-		if (mMediaPlayer != null && mState == StatusPlayerType.STARTED) {
+		if (mMediaPlayer != null && mState >= StatusPlayerType.STARTED) {
 			return mMediaPlayer.getDuration();
 		}
 		return 0;
@@ -106,7 +106,7 @@ public class MediaPlayerManager extends MediaPlayerSetting implements PlayMusic,
 
 	@Override
 	public int getCurrrentPosition() {
-		if (mMediaPlayer != null && mState != StatusPlayerType.IDLE) {
+		if (mMediaPlayer != null && mState >= StatusPlayerType.STARTED) {
 			return mMediaPlayer.getCurrentPosition();
 		}
 		return 0;
@@ -118,9 +118,9 @@ public class MediaPlayerManager extends MediaPlayerSetting implements PlayMusic,
 	}
 
 	@Override
-	public void seek(int possition) {
+	public void seek(int position) {
 		if (mMediaPlayer != null) {
-			mMediaPlayer.seekTo(possition);
+			mMediaPlayer.seekTo(position);
 		}
 	}
 
@@ -139,7 +139,7 @@ public class MediaPlayerManager extends MediaPlayerSetting implements PlayMusic,
 	@Override
 	public void next() {
 		if (mShuffleType == MediaPlayerSetting.ShuffleType.ON) {
-			mCurrentIndex = ramdomSong();
+			mCurrentIndex = randomTrack();
 			create(mCurrentIndex);
 			mListener.onChangeTrack();
 			return;
@@ -198,10 +198,6 @@ public class MediaPlayerManager extends MediaPlayerSetting implements PlayMusic,
 		mTracks = tracks;
 	}
 
-	public MediaPlayer getMediaPlayer() {
-		return mMediaPlayer;
-	}
-
 	public int getState() {
 		return mState;
 	}
@@ -211,7 +207,11 @@ public class MediaPlayerManager extends MediaPlayerSetting implements PlayMusic,
 		return this;
 	}
 
-	private int ramdomSong() {
+	public void setMediaPlayer(MediaPlayer mediaPlayer) {
+		mMediaPlayer = mediaPlayer;
+	}
+
+	private int randomTrack() {
 		int currentSong = getTrack();
 		Random r = new Random();
 		int result = r.nextInt(getTracks().size());

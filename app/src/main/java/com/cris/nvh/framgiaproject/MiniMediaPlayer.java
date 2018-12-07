@@ -82,12 +82,18 @@ public class MiniMediaPlayer implements View.OnClickListener {
 	}
 
 	public void update() {
-		List<Track> tracks = mService.getTracks();
-		int index = mService.getTrack();
-		mTrackName.setText(tracks.get(index).getTitle());
-		mTrackSinger.setText(tracks.get(index).getArtist());
-		setImageAlbum(tracks.get(index));
-		if (mService != null && mService.isPlaying()) {
+		if (mService.getTracks() != null) {
+			List<Track> tracks = mService.getTracks();
+			int index = mService.getTrack();
+			mTrackName.setText(tracks.get(index).getTitle());
+			mTrackSinger.setText(tracks.get(index).getArtist());
+			setImageAlbum(tracks.get(index));
+			setPlayButton();
+		}
+	}
+
+	public void setPlayButton() {
+		if (mService.isPlaying()) {
 			mImageChangeState.setBackgroundResource(R.drawable.ic_pause);
 			return;
 		}

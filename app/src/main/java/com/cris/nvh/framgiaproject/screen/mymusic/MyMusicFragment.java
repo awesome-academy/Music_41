@@ -19,7 +19,6 @@ import com.cris.nvh.framgiaproject.R;
 import com.cris.nvh.framgiaproject.adapter.LibraryAdapter;
 import com.cris.nvh.framgiaproject.adapter.TracksAdapter;
 import com.cris.nvh.framgiaproject.data.model.Track;
-import com.cris.nvh.framgiaproject.screen.home.HomeFragment;
 import com.cris.nvh.framgiaproject.service.PlayMusicService;
 
 import java.util.List;
@@ -27,6 +26,7 @@ import java.util.List;
 import static com.cris.nvh.framgiaproject.screen.listtracks.ListTracksActivity.getListTracksActivityIntent;
 import static com.cris.nvh.framgiaproject.screen.listtracks.TrackTypes.LOCAL;
 import static com.cris.nvh.framgiaproject.screen.playing.PlayActivity.getPlayActivityIntent;
+import static com.cris.nvh.framgiaproject.screen.search.SearchActivity.getSearchActivityIntent;
 import static com.cris.nvh.framgiaproject.screen.splash.SplashActivity.EXTRA_TRACKS;
 import static com.cris.nvh.framgiaproject.service.PlayMusicService.getMyServiceIntent;
 
@@ -86,8 +86,7 @@ public class MyMusicFragment extends Fragment implements View.OnClickListener,
 	public void onClick(View view) {
 		switch (view.getId()) {
 			case R.id.image_search:
-				startActivity(HomeFragment
-					.getSearchActivityIntent(getActivity(), mEditSearch.getText().toString()));
+				startActivity(getSearchActivityIntent(getActivity(), mEditSearch.getText().toString()));
 				break;
 			default:
 				break;
