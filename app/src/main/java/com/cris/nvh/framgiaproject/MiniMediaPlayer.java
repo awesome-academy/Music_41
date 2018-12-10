@@ -89,6 +89,7 @@ public class MiniMediaPlayer implements View.OnClickListener {
 			mTrackSinger.setText(tracks.get(index).getArtist());
 			setImageAlbum(tracks.get(index));
 			setPlayButton();
+			loadingSuccess();
 		}
 	}
 
