@@ -23,8 +23,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
-        <activity android:name=".screen.playing.PlayActivity" />
+        <activity
+            android:name=".MainActivity"
+            android:parentActivityName=".screen.splash.SplashActivity" />
+        <activity
+            android:name=".screen.playing.PlayActivity"
+            android:launchMode="singleTask"
+            android:parentActivityName=".MainActivity" />
         <activity android:name=".screen.genres.GenresActivity" />
         <activity android:name=".screen.search.SearchActivity" />
         <activity android:name=".screen.listtracks.ListTracksActivity" />

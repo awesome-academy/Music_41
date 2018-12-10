@@ -137,6 +137,11 @@ public class MediaPlayerManager extends MediaPlayerSetting implements PlayMusic,
 	}
 
 	@Override
+	public void setTrack(int index) {
+		mCurrentIndex = index;
+	}
+
+	@Override
 	public void next() {
 		if (mShuffleType == MediaPlayerSetting.ShuffleType.ON) {
 			mCurrentIndex = randomTrack();
@@ -194,8 +199,9 @@ public class MediaPlayerManager extends MediaPlayerSetting implements PlayMusic,
 		return mTracks;
 	}
 
-	public void setTracks(List<Track> tracks) {
+	public MediaPlayerManager setTracks(List<Track> tracks) {
 		mTracks = tracks;
+		return this;
 	}
 
 	public int getState() {
@@ -203,7 +209,7 @@ public class MediaPlayerManager extends MediaPlayerSetting implements PlayMusic,
 	}
 
 	public MediaPlayerManager setState(int state) {
-		this.mState = state;
+		mState = state;
 		return this;
 	}
 

@@ -35,7 +35,6 @@ public class MyMusicFragment extends Fragment implements View.OnClickListener,
 	LibraryAdapter.OnClickItemListener, TracksAdapter.OnClickItemTrackListener {
 	private static final int DEFAULT_TOTAL_SONGS = 0;
 	private static final String TAG = "DIALOG";
-	private static String[] sOptions = {"Delete", "Add to favorite"};
 	private RecyclerView mRecyclerViewLibrary;
 	private RecyclerView mRecyclerViewRecent;
 	private EditText mEditSearch;
@@ -104,7 +103,6 @@ public class MyMusicFragment extends Fragment implements View.OnClickListener,
 			public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
 				PlayMusicService.LocalBinder binder = (PlayMusicService.LocalBinder) iBinder;
 				mService = binder.getService();
-				mService.setTracks(getLocalTracks());
 			}
 
 			@Override
@@ -132,8 +130,7 @@ public class MyMusicFragment extends Fragment implements View.OnClickListener,
 
 	private List<Track> getLocalTracks() {
 		if (getArguments() != null) {
-			List<Track> tracks = getArguments().getParcelableArrayList(EXTRA_TRACKS);
-			return tracks;
+			return getArguments().getParcelableArrayList(EXTRA_TRACKS);
 		}
 		return null;
 	}

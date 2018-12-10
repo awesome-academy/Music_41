@@ -28,6 +28,8 @@ public interface PlayMusic {
 
 	int getTrack();
 
+	void setTrack(int index);
+
 	void next();
 
 	void previous();

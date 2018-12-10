@@ -17,18 +17,29 @@
 
     <TextView
         android:id="@+id/text_song_name"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/dp_120"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/dp_18"
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:singleLine="true"
         android:textColor="@color/color_white"
         app:layout_constraintLeft_toRightOf="@id/image_back_button"
         app:layout_constraintTop_toTopOf="@id/image_back_button" />
 
     <TextView
         android:id="@+id/text_singer_name"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/dp_120"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/dp_18"
+        android:layout_marginTop="@dimen/dp_5"
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:singleLine="true"
         android:textColor="@color/color_white"
         app:layout_constraintBottom_toBottomOf="@id/image_back_button"
         app:layout_constraintLeft_toRightOf="@id/image_back_button" />
@@ -50,7 +61,7 @@
         android:layout_width="@dimen/dp_24"
         android:layout_height="@dimen/dp_24"
         android:layout_marginLeft="@dimen/dp_80"
-        android:layout_marginTop="@dimen/dp_40"
+        android:layout_marginTop="@dimen/dp_55"
         android:src="@drawable/ic_favorite_none"
         app:layout_constraintLeft_toLeftOf="@id/image_album"
         app:layout_constraintRight_toRightOf="@id/image_album"
@@ -61,13 +72,12 @@
         android:layout_width="@dimen/dp_24"
         android:layout_height="@dimen/dp_24"
         android:layout_marginRight="@dimen/dp_80"
+        android:layout_marginTop="@dimen/dp_55"
         android:src="@drawable/ic_download"
         app:layout_constraintLeft_toLeftOf="@id/image_album"
         app:layout_constraintRight_toRightOf="@id/image_album"
-        app:layout_constraintTop_toTopOf="@+id/image_favorite" />
+        app:layout_constraintTop_toBottomOf="@+id/image_album" />
 
-    <include
-        android:id="@+id/media_controller"
-        layout="@layout/layout_play_controll_bar" />
+    <include layout="@layout/layout_play_controll_bar" />
 
 </android.support.constraint.ConstraintLayout>

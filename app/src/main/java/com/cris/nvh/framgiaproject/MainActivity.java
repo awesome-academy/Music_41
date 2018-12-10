@@ -27,6 +27,7 @@ import com.cris.nvh.framgiaproject.screen.setting.SettingFragment;
 import com.cris.nvh.framgiaproject.service.PlayMusicService;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.cris.nvh.framgiaproject.mediaplayer.MediaRequest.FAILURE;
 import static com.cris.nvh.framgiaproject.mediaplayer.MediaRequest.LOADING;
@@ -212,7 +213,12 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 				PlayMusicService.LocalBinder binder = (PlayMusicService.LocalBinder) iBinder;
 				mService = binder.getService();
 				mService.setUIHandler(mHandler);
-				mService.setTracks(mTracks);
+				List<Track> tracks = mService.getMediaPlayerManager().getTracks();
+				if (tracks == null) {
+					mService.setTracks(mTracks);
+					return;
+				}
+				mService.setTracks(tracks);
 			}
 
 			@Override

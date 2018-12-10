@@ -106,6 +106,7 @@ public class PlayMusicService extends Service implements IService, Serializable,
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+		mBuilder = null;
 		mMediaPlayerManager.setMediaPlayer(null);
 	}
 
@@ -161,7 +162,7 @@ public class PlayMusicService extends Service implements IService, Serializable,
 
 	@Override
 	public int getTrack() {
-		return mMediaPlayerManager.getTrack();
+		return mMediaPlayerManager != null ? mMediaPlayerManager.getTrack() : 0;
 	}
 
 	@Override
@@ -180,9 +181,13 @@ public class PlayMusicService extends Service implements IService, Serializable,
 
 	@Override
 	public void onStartLoading() {
-		if (mBuilder == null) createNotification();
-		else updateNotification(getTrack());
-		if (mUIHandler != null) mUIHandler.sendEmptyMessage(LOADING);
+		if (mBuilder == null) {
+			createNotification();
+		} else {
+			updateNotification(getTrack());
+		}
+		if (mUIHandler != null)
+			mUIHandler.sendEmptyMessage(LOADING);
 	}
 
 	@Override
@@ -276,9 +281,9 @@ public class PlayMusicService extends Service implements IService, Serializable,
 		Intent nextIntent = new Intent(this, PlayActivity.class);
 		TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
 		stackBuilder.addNextIntentWithParentStack(nextIntent);
-		PendingIntent resultPenddingIntent = stackBuilder
+		PendingIntent resultPendingIntent = stackBuilder
 			.getPendingIntent(REQUEST_CODE, PendingIntent.FLAG_UPDATE_CURRENT);
-		mBuilder.setContentIntent(resultPenddingIntent);
+		mBuilder.setContentIntent(resultPendingIntent);
 		initLayoutNotification(getTrack());
 		startForeground(NOTIFICATION_ID, mBuilder.build());
 		createPendingIntent();
@@ -303,12 +308,15 @@ public class PlayMusicService extends Service implements IService, Serializable,
 		if (isPlaying()) {
 			mNotificationLayout.setImageViewResource(R.id.image_play, R.drawable.ic_pause);
 			mBuilder.setOngoing(false);
-		} else {
-			mNotificationLayout.setImageViewResource(R.id.image_play, R.drawable.ic_play);
-			mBuilder.setOngoing(true);
+			mBuilder.setContent(mNotificationLayout);
+			startForeground(NOTIFICATION_ID, mBuilder.build());
+			return;
 		}
+		mNotificationLayout.setImageViewResource(R.id.image_play, R.drawable.ic_play);
+		mBuilder.setOngoing(true);
 		mBuilder.setContent(mNotificationLayout);
 		startForeground(NOTIFICATION_ID, mBuilder.build());
+		stopForeground(true);
 	}
 
 	private void updateNotification() {

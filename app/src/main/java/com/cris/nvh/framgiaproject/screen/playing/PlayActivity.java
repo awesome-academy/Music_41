@@ -56,6 +56,8 @@ public class PlayActivity extends AppCompatActivity {
 	protected void onDestroy() {
 		super.onDestroy();
 		unbindService(mConnection);
+		if (!mService.isPlaying())
+			stopService(getMyServiceIntent(this));
 	}
 
 	public static Intent getPlayActivityIntent(Context context) {
