@@ -9,6 +9,7 @@
         android:id="@+id/image_track"
         android:layout_width="@dimen/dp_45"
         android:layout_height="@dimen/dp_45"
+        android:layout_marginBottom="@dimen/dp_2"
         android:layout_marginLeft="@dimen/dp_5"
         android:scaleType="fitXY"
         app:layout_constraintBottom_toBottomOf="parent"

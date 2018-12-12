@@ -2,11 +2,9 @@
     <gradient
         android:angle="90"
         android:centerColor="@color/color_black"
+        android:endColor="@color/color_black"
         android:startColor="@color/color_green" />
 
     <corners android:radius="10px" />
 
-    <stroke android:color="@color/color_white" />
-
-    <stroke android:color="@color/color_white" />
 </shape>

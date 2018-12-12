@@ -30,6 +30,8 @@
                 android:layout_marginBottom="-20dp"
                 android:background="@drawable/round_button"
                 android:text="@string/favorite"
+                android:textColor="@color/color_white"
+                android:textSize="@dimen/sp_18"
                 app:layout_collapseMode="pin" />
 
             <android.support.v7.widget.Toolbar
@@ -61,7 +63,7 @@
         android:id="@+id/mini_mediaplayer"
         layout="@layout/layout_mini_mediaplayer"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_55"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:layout_marginTop="@dimen/dp_15" />
 

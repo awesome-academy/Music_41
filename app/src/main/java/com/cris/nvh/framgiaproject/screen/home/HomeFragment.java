@@ -50,6 +50,7 @@ public class HomeFragment extends Fragment implements
 	private static final int DURATION = 8000;
 	private static final int FIRST_PAGE = 0;
 	private static final int PLUS = 1;
+	private static final int DELAY = 0;
 	public static MiniMediaPlayer sMiniMediaPlayer;
 	private PlayMusicService mService;
 	private ViewPager mViewPager;
@@ -190,9 +191,8 @@ public class HomeFragment extends Fragment implements
 	}
 
 	private void pageSwitcher(int time) {
-		Timer timer;
-		timer = new Timer();
-		timer.scheduleAtFixedRate(new RemindTask(), 0, time);
+		Timer timer = new Timer();
+		timer.schedule(new RemindTask(), DELAY, time);
 	}
 
 	private void bindToService() {
@@ -216,13 +216,13 @@ public class HomeFragment extends Fragment implements
 	private class RemindTask extends TimerTask {
 		@Override
 		public void run() {
-			mActivity.runOnUiThread(new Runnable() {
+			getActivity().runOnUiThread(new Runnable() {
 				public void run() {
-					if (mViewPager.getCurrentItem() == mViewPager.getChildCount()) {
+					if (mViewPager.getCurrentItem() >= mViewPager.getChildCount()) {
 						mViewPager.setCurrentItem(FIRST_PAGE);
-						return;
+					} else {
+						mViewPager.setCurrentItem(mViewPager.getCurrentItem() + PLUS);
 					}
-					mViewPager.setCurrentItem(mViewPager.getCurrentItem() + PLUS);
 				}
 			});
 		}
