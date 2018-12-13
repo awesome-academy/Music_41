@@ -12,6 +12,8 @@ import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.cris.nvh.framgiaproject.R;
@@ -34,9 +36,10 @@ import static com.cris.nvh.framgiaproject.screen.playing.PlayActivity.getPlayAct
  */
 
 public class FavoriteActivity extends AppCompatActivity
-	implements FavoriteContract.View, TracksAdapter.OnClickItemTrackListener {
+	implements FavoriteContract.View, View.OnClickListener, TracksAdapter.OnClickItemTrackListener {
 
 	private RecyclerView mRecyclerView;
+	private ImageView mButtonBack;
 	private TracksAdapter mAdapter;
 	private List<Track> mTracks;
 	private FavoriteContract.Presenter mPresenter;
@@ -149,6 +152,17 @@ public class FavoriteActivity extends AppCompatActivity
 	public void showDialogFeatureTrack(int position) {
 	}
 
+	@Override
+	public void onClick(View view) {
+		switch (view.getId()) {
+			case R.id.image_back_button:
+				super.onBackPressed();
+				break;
+			default:
+				break;
+		}
+	}
+
 	public static Intent getFavoriteActivityIntent(Context context) {
 		return new Intent(context, FavoriteActivity.class);
 	}
@@ -167,9 +181,11 @@ public class FavoriteActivity extends AppCompatActivity
 	private void initView() {
 		mTracks = new ArrayList<>();
 		mRecyclerView = findViewById(R.id.recycler_favorite);
+		mButtonBack = findViewById(R.id.image_back_button);
 		mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 		mAdapter = new TracksAdapter(mTracks, this);
 		mAdapter.setFavorite(true);
 		mRecyclerView.setAdapter(mAdapter);
+		mButtonBack.setOnClickListener(this);
 	}
 }

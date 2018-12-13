@@ -4,8 +4,6 @@
     <string name="network_error">Connect network error</string>
     <string name="permisson_not_granted">Not granted</string>
     <string name="load_local_failed">Load local failed</string>
-    <string name="json_to_object_failed">Convert json to object failed</string>
-    <string name="get_json_string_failed">Get json string failed</string>
     <string name="country">Country</string>
     <string name="my_music">My music</string>
     <string name="setting">Setting</string>
@@ -23,7 +21,6 @@
     <string name="default_time">0:00</string>
     <string name="text_now_playing">Now playing</string>
     <string name="text_results">Results</string>
-    <string name="text_add_success">Add track successfull</string>
     <string name="notify_file_exists">File already existed</string>
     <string name="confirm_yes">Yes</string>
     <string name="confirm_no">No</string>
